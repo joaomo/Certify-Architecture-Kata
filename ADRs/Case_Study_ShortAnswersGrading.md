@@ -84,6 +84,35 @@ This section compares three options for addressing the challenge of scaling shor
 
 #### 1. Option 1: Semantic Similarity Evaluation + RAG Feedback (Chosen Solution)
 
+**One-line Description:**  This option uses AI for initial semantic analysis and RAG-based feedback generation, followed by expert review for most cases, but automates pass/fail decisions for high-confidence cases, skipping human review in those instances, while still incorporating both AI suggestions and human judgment in the overall grading process.
+
+```mermaid
+graph LR
+    %% Inputs
+    A["Submit Test"]:::baseline --> B["Semantic Similarity <br> Analysis (AI)"]:::phase2
+    MC("Multiple-Choice <br> Grades"):::baseline --> C
+
+    %% Phase 1 & Baseline: Expert Review Path (for "Other Cases")
+    C -- "Other Cases" --> E["Expert Review <br> (Human, using AI & RAG)"]:::baseline
+    G -- "Other Cases" --> E
+    E --> F["Email Notification <br> Pass/Fail & Feedback"]:::baseline
+
+    %% Phase 2 & Decision Point (Phase 3 color) and Feedback Loop from QC
+    B --> C{"Combine Semantic <br> Analysis & MC <br> Grades"}:::phase3
+    H --> I[("Feedback Loop <br> to AI System")]:::phase2
+    I --> B
+
+    %% Phase 3: Automated Pass Path
+    C -- "High Confidence Pass" --> G["RAG Feedback <br> Generation (AI) <br> (Pre-written Options)"]:::phase1
+    G -- "High Confidence Pass" --> H["Quality Control <br> Sample Review <br> (Human Experts)"]:::phase3
+    H --> F
+
+    classDef baseline stroke:#999,stroke-width:1px
+    classDef phase1 stroke:#007bff,stroke-width:2px
+    classDef phase2 stroke:#28a745,stroke-width:2px
+    classDef phase3 stroke:#ffc107,stroke-width:2px
+```
+
 **Justification:**
 
 *   **Efficiency and Scalability:** Semantic similarity models are computationally efficient, allowing for rapid processing of large volumes of data.
@@ -113,6 +142,17 @@ This section compares three options for addressing the challenge of scaling shor
 ---
 
 #### 2. Option 2: RAG for Evaluation (Alternative Solution)
+
+**One-line Description:** This option proposes using RAG, potentially with LLMs, for direct AI-driven evaluation of short-answer questions, with human review for validation and ambiguous cases, and potential automation for high-confidence outcomes.
+
+```mermaid
+graph LR
+    A["Submit Test"] --> B["RAG-based Evaluation (AI)"]
+    B --> C{"Expert Review (Validation/Ambiguous Cases - Human)"}
+    C --> D["Combine with Multiple-Choice Grade"]
+    D --> E{"Automated Pass/Fail (Potentially High Confidence Cases) OR Human Review (Other Cases)"}
+    E --> F["Send Notification"]
+```
 
 **Justification:**
 
@@ -145,6 +185,16 @@ This section compares three options for addressing the challenge of scaling shor
 ---
 
 #### 3. Option 3: Manual Grading (Baseline - Current Process)
+
+**One-line Description:**  This option represents the current process of fully manual grading by expert architects, involving human evaluation of short-answer questions, combination with multiple-choice scores, and final human review for pass/fail decisions.
+
+```mermaid
+graph LR
+    A[Submit Test] --> B["Manual Short-Answer Grading (Human Expert)"]
+    B --> C["Combine with Multiple-Choice Grade"]
+    C --> D{"Human Review (Grade Consolidation)"}
+    D --> E[Send Notification]
+```
 
 **Justification (for current use):**
 
@@ -203,11 +253,11 @@ It is assumed that the AI solutions can be seamlessly integrated with existing t
 **Data:**
 We assume the data from the completed tests includes annotations indicating pass/fail status and links to the feedback provided to candidates for each short-answer question.
 
-## Implementation Plan
+## Implementation Plan (Option 1)
 
 ### Phase 1: Feedback Generation Setup
 
-During this phase, the RAG system will be configured to generate pre-written feedback based on candidate responses, utilizing a library of feedback developed for both approval and failure cases. The system will provide experts with options for feedback, allowing them to select the most appropriate response to send to candidates. This setup will significantly reduce the time experts spend crafting individual feedback, streamlining the review process. Rigorous testing will be conducted to ensure that the generated feedback is relevant, clear, and actionable.
+During this phase, the RAG system will be configured to generate pre-written feedback based on candidate responses, utilizing a library of feedback developed for both approval and other cases. The system will provide experts with options for feedback, allowing them to select the most appropriate response to send to candidates. This setup will significantly reduce the time experts spend crafting individual feedback, streamlining the review process. Rigorous testing will be conducted to ensure that the generated feedback is relevant, clear, and actionable.
 
 ### Phase 2: Integration of Semantic Analysis and Feedback Loop
 
@@ -217,6 +267,11 @@ In this phase, the semantic similarity analysis will be fully integrated into th
 
 In this phase, the system will leverage the results from the semantic similarity analysis alongside the multiple-choice scores to identify cases where there is strong evidence indicating that a candidate passes. For these cases, the system will automate the grading process, allowing candidates to move on to the second test without human intervention. To maintain quality control, a small sample of these automated decisions will be sent to human experts for review, ensuring that the system's accuracy is upheld. Additionally, for borderline cases where the confidence in the semantic analysis is lower or where there is potential for false negatives, human graders will be involved to assess the responses. If the human score is high in these borderline cases, candidates will also be allowed to progress to the second test. This approach balances efficiency with the need for oversight, ensuring that high-quality standards are maintained throughout the grading process.
 
+---
+
+Refer to the [diagram](#1-option-1-semantic-similarity-evaluation--rag-feedback-chosen-solution) in the section **Option 1: Semantic Similarity Evaluation + RAG Feedback (Chosen Solution)** for a visual representation of the AI-assisted short-answer grading process.
+
+This solution employs AI for Phase 2 (green) semantic analysis, combines it with multiple-choice grades at a Phase 3 (yellow) decision point; for 'High Confidence Pass' cases, it automates pass/fail with Phase 1 (blue) RAG-generated feedback and quality control, while 'Other Cases' proceed to baseline expert review, which also utilizes RAG.
 
 ## Resulting Architecture
 

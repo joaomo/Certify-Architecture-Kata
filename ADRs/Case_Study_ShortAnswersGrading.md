@@ -9,40 +9,179 @@
 
 ## Context
 
-Certifiable, Inc. anticipates a 5-10X increase in test submissions due to expanding enrollment and new partnerships. Test 1 comprises multiple-choice questions, which are automatically graded, and short-answer questions, which require manual grading by expert software architects. This manual process is time-consuming, taking up to three hours per candidate, and poses a risk to the company's one-week grading guarantee if enhancements are not implemented. Maintaining trust in grading integrity is crucial, as even minor misclassifications could damage the brand's reputation. The company faces scalability constraints, as hiring additional expert graders is both costly and slow, and a fully automated approach without oversight might undermine trust. Any new grading solution must integrate smoothly with existing test systems and data pipelines.
+Certifiable, Inc. anticipates a 5-10X increase in test submissions due to expanding enrollment and new partnerships. Test 1 comprises multiple-choice questions, which are automatically graded, and short-answer questions, which require manual grading by expert software architects. This manual process is time-consuming, taking up to three hours per candidate for grading short-answer questions, and poses a risk to the company's one-week grading guarantee if enhancements are not implemented. Maintaining trust in grading integrity is crucial, as even minor misclassifications could damage the brand's reputation. The company faces scalability constraints, as hiring additional expert graders is both costly and slow, and a fully automated approach without oversight might undermine trust in the nuanced evaluation of architect skills. Any new grading solution must integrate smoothly with existing test systems and data pipelines.
 
 ## Problem Statement
 
 The challenge for Certifiable, Inc. is to introduce AI-driven short-answer grading to handle increased volumes without compromising accuracy and reputation. The solution must be scalable to manage the anticipated surge in submissions while maintaining or exceeding current human accuracy standards, with minimal false positives or negatives. Speed and efficiency are crucial for both candidate satisfaction and operational effectiveness. Retaining human oversight for ambiguous cases is essential to ensure the highest quality of results. Additionally, the system must integrate seamlessly with existing test interfaces and internal data repositories.
 
+**Current Architecure**
+
+```mermaid
+graph 
+    subgraph User Interfaces
+        A[Candidate Testing <br> User Interface]
+        C[Expert Grading <br> User Interface]
+    end
+
+    B(Public API Gateway)
+
+    subgraph Candidate Registration
+        D[Candidate Registration Service <br> *Candidate Registration*]
+        E[(Candidate Database)]
+        D --> E
+    end
+
+    subgraph Aptitude Test Taking
+        F[Aptitude Test Taker <br> *Test Loader* <br> *Question Sender* <br> *Answer Capture* <br> *Test Timer*]
+        N[(Aptitude Test Database <br> *see Admin*)]
+        N --> F
+    end
+
+    subgraph Short Answer Grading
+        G[Aptitude Manual Capture <br> *Short Answer*]
+        O[(Aptitude Test Ungraded <br> Database)]
+        G --> O
+        I[Aptitude Manual Grader <br> *Short Answer* <br> *Grade Consolidation*]
+        O --> I
+    end
+
+    subgraph Multiple Choice Grading
+        H[Aptitude Auto Grader <br> *Multiple Choice*]
+        N --> H
+        P[(Aptitude Test Grade <br> Database <br> *see Admin*)]
+        H --> P
+    end
+
+    subgraph Candidate Status and Notification
+        J[Candidate Status Service <br> *Candidate Progress* <br> *see Test 2*]
+        K[(Candidate Status Database <br> *see Test 2*)]
+        J --> K
+        L[Candidate Aptitude Notification <br> *Candidate Aptitude Results*]
+        P --> L
+        M[Email]
+        L --> M
+    end
+
+    A --> B
+    C --> B
+    B --> D
+    B --> F
+    F --> G
+    F --> H
+    I --> J
+    H --> I
+    I --> L
+```
+
 ## Decision
 
-Certifiable, Inc. will implement a hybrid AI-assisted grading system for Test 1. Semantic similarity models will be used to evaluate short-answer responses by comparing them to ideal answers, combined with multiple-choice scores to propose pass/fail decisions to experts. Retrieval-Augmented Generation (RAG) will provide feedback and highlight areas needing human input, ensuring targeted expert review.
+Certifiable, Inc. will implement a hybrid AI-assisted grading system for Test 1 short-answer questions to enhance efficiency and maintain grading quality.  The system will employ semantic similarity models to evaluate candidate short-answer responses by comparing them to a set of top-selected answers.  These semantic analysis results, combined with automatically graded multiple-choice scores, will generate proposed pass/fail decisions for expert software architect review.  Critically, to expedite the expert review process and ensure consistent feedback, a Retrieval-Augmented Generation (RAG) system will be integrated to provide **pre-written feedback options** for experts to choose from, alongside highlighting specific areas in candidate responses that require their focused attention.  Expert graders will retain final decision-making authority, leveraging the AI-provided suggestions and feedback to efficiently and accurately assess candidate performance.
 
-### Justification
+### Option Comparison: AI-Assisted Short-Answer Grading for Test 1
 
-**Efficiency and Scalability:**
-Semantic similarity models are computationally efficient, allowing for rapid processing of large volumes of data. This makes them well-suited for handling the anticipated surge in test submissions without compromising speed.
+This section compares three options for addressing the challenge of scaling short-answer grading for Test 1 at Certifiable, Inc.:
 
-**Cost-Effectiveness:**
-By avoiding the need for extensive fine-tuning of large language models or NLP classifiers, this approach reduces both the financial and data requirements, making it a more feasible option given current resources.
+#### 1. Option 1: Semantic Similarity Evaluation + RAG Feedback (Chosen Solution)
 
-**Enhanced Feedback and Focused Human Oversight:**
-RAG provides detailed, contextually relevant feedback that can be reviewed by experts, ensuring candidates receive clear guidance on their performance. Additionally, RAG highlights specific areas needing human input, allowing experts to concentrate their efforts where they are most needed.
+**Justification:**
 
-**Maintaining Quality and Integrity:**
-By combining AI-driven evaluations with human oversight for ambiguous cases, the system maintains high grading standards and minimizes the risk of false positives, preserving the certification's credibility.
+*   **Efficiency and Scalability:** Semantic similarity models are computationally efficient, allowing for rapid processing of large volumes of data.
+*   **Cost-Effectiveness:** Avoids the need for extensive fine-tuning of large language models, reducing financial and data requirements.
+*   **Enhanced Feedback and Focused Human Oversight:** RAG provides contextually relevant feedback and highlights areas for expert review.
+*   **Maintaining Quality and Integrity:** Hybrid approach combines AI efficiency with essential human oversight for ambiguous cases.
 
-### Trade-off Analysis
+**Trade-off Analysis:**
 
-**Accuracy vs. Cost:**
-While fine-tuning LLMs or NLP classifiers could potentially offer higher accuracy, the associated costs and data requirements make semantic similarity models a more practical choice. This approach balances the need for accuracy with budgetary constraints.
+*   **Accuracy vs. Cost:** Balances accuracy needs with budgetary constraints by using semantic similarity instead of more expensive LLMs for core evaluation.
+*   **Speed vs. Human Involvement:** Accelerates grading with AI while retaining human oversight for quality assurance.
+*   **Feedback Quality vs. Implementation Complexity:** Justifies the added complexity of RAG with enhanced feedback quality and fairness.
 
-**Speed vs. Human Involvement:**
-The use of AI models accelerates the grading process, but human oversight is still necessary for ambiguous cases. This trade-off ensures that while grading is faster, quality is not compromised.
+**Pros:**
 
-**Feedback Quality vs. Implementation Complexity:**
-Implementing RAG adds complexity to the system but significantly enhances the quality of feedback provided to candidates. This trade-off is justified by the improved candidate experience and the fairness when providing feedback across candidates, ensuring consistent and equitable evaluations.
+*   Computationally efficient and scalable.
+*   Cost-effective development and deployment.
+*   Transparent and auditable evaluation process.
+*   Provides quantitative scores for consistent grading.
+*   RAG effectively enhances feedback and expert efficiency.
+
+**Cons:**
+
+*   Potentially less nuanced evaluation than LLM-based approaches.
+*   RAG implementation adds some complexity to the system.
+
+---
+
+#### 2. Option 2: RAG for Evaluation (Alternative Solution)
+
+**Justification:**
+
+*   **Contextual Understanding:** RAG, especially with LLMs, can understand context and nuanced language for holistic evaluation.
+*   **Flexibility and Adaptability:** More flexible in handling variations in candidate responses and partially correct answers.
+*   **Potential for More Human-Like Assessment:** Can mimic human assessment by considering various aspects of responses.
+*   **Direct Feedback Integration (Potentially):**  Evaluation model could be adapted for feedback generation.
+
+**Trade-off Analysis:**
+
+*   **Accuracy and Reliability Concerns:** Potential for less reliable and consistent evaluations compared to semantic similarity.
+*   **Computational Cost and Latency:** Significantly higher computational cost and latency, impacting scalability.
+*   **Development and Fine-tuning Complexity:** Complex to develop, fine-tune, and validate for reliable evaluation.
+*   **Explainability and Auditability:**  Less transparent and auditable evaluation process.
+
+**Pros:**
+
+*   Potentially more nuanced and human-like evaluation.
+*   High flexibility in understanding diverse responses.
+*   Potential for integrated evaluation and feedback.
+
+**Cons:**
+
+*   Accuracy and reliability are less certain.
+*   High computational cost and scalability challenges.
+*   Complex development and validation process.
+*   Lack of explainability and auditability raises trust concerns.
+*   Quantitative assessment can be challenging.
+
+---
+
+#### 3. Option 3: Manual Grading (Baseline - Current Process)
+
+**Justification (for current use):**
+
+*   **High Accuracy and Nuance:** Human experts can provide the most nuanced and accurate evaluation of complex short-answer questions.
+*   **Flexibility and Adaptability:** Experts can adapt to unexpected or novel responses and apply complex judgment.
+*   **High Perceived Integrity:** Manual grading is often seen as the gold standard for high-stakes assessments, fostering trust.
+
+**Trade-off Analysis (for scaling to increased volume):**
+
+*   **Scalability Limitations:**  Manual grading does not scale effectively to handle a 5-10X increase in submissions.
+*   **Time-Consuming and Slow:**  Grading time per candidate is high (up to 3 hours), leading to delays and bottlenecks.
+*   **High Cost:**  Hiring and training enough expert graders to handle increased volume is expensive and time-consuming.
+*   **Consistency Challenges:**  Maintaining consistency across multiple human graders can be difficult without rigorous training and calibration.
+
+**Pros:**
+
+*   Highest potential for accuracy and nuanced understanding.
+*   Maximum flexibility and adaptability.
+*   Strong perception of grading integrity.
+
+**Cons:**
+
+*   Extremely poor scalability for increased submission volume.
+*   Very time-consuming and slow grading process.
+*   High operational costs for increased volume.
+*   Potential for inconsistency across graders.
+
+---
+
+#### Justification for Choosing Option 1: Semantic Similarity + RAG Feedback
+
+Certifiable, Inc. has strategically chosen **Option 1: Semantic Similarity Evaluation combined with RAG for Feedback** as the optimal solution for AI-assisted short-answer grading for Test 1. This decision is grounded in the need to balance several critical factors: **scalability, cost-effectiveness, accuracy, reliability, transparency, and maintaining trust** in the certification process.
+
+While Option 2 (RAG for Evaluation) offers the allure of potentially more nuanced assessments, its significant drawbacks in terms of **reliability, scalability, cost, and explainability** make it a less practical and riskier choice for Certifiable, Inc.  Option 3 (Manual Grading), while highly accurate in principle, is simply **unscalable and unsustainable** for the anticipated surge in test submissions.
+
+Option 1 provides the most **pragmatic and effective balance**. It leverages the computational efficiency and transparency of semantic similarity for core evaluation, ensuring scalability and cost-effectiveness. Simultaneously, it strategically incorporates RAG to enhance the expert grading process by providing valuable feedback options and focusing human graders' attention, thereby improving both **efficiency and feedback quality** without sacrificing **reliability or transparency**.  This hybrid approach allows Certifiable, Inc. to address the urgent need for scalability while upholding the crucial standards of accuracy, integrity, and trust that are essential for its certification program's reputation and success.
+
 
 ### Assumptions
 
@@ -79,9 +218,107 @@ In this phase, the semantic similarity analysis will be fully integrated into th
 In this phase, the system will leverage the results from the semantic similarity analysis alongside the multiple-choice scores to identify cases where there is strong evidence indicating that a candidate passes. For these cases, the system will automate the grading process, allowing candidates to move on to the second test without human intervention. To maintain quality control, a small sample of these automated decisions will be sent to human experts for review, ensuring that the system's accuracy is upheld. Additionally, for borderline cases where the confidence in the semantic analysis is lower or where there is potential for false negatives, human graders will be involved to assess the responses. If the human score is high in these borderline cases, candidates will also be allowed to progress to the second test. This approach balances efficiency with the need for oversight, ensuring that high-quality standards are maintained throughout the grading process.
 
 
-## Resulting Architecure
+## Resulting Architecture
 
-The resulting architecture for Test 1 grading combines AI-driven semantic analysis with human oversight to enhance efficiency and maintain accuracy. Semantic similarity models analyze short-answer responses, comparing them to ideal answers and generating scores with confidence intervals. These scores are combined with multiple-choice results to create an overall confidence level for pass/fail decisions. High-confidence pass cases are automated, allowing candidates to proceed to Test 2 directly, with a small sample undergoing human quality control. Borderline cases and those with lower confidence are flagged for expert review. To aid experts, a Retrieval-Augmented Generation (RAG) system provides pre-written feedback options and relevant examples, particularly for ambiguous responses. A feedback loop is implemented, allowing expert graders to refine the semantic analysis model continuously. This hybrid approach optimizes grading speed, reduces expert workload, and ensures consistent, high-quality certification outcomes.
+The resulting architecture for **Test 1 short-answer grading** combines AI-driven semantic analysis with human oversight to enhance efficiency and maintain accuracy. Semantic similarity models analyze short-answer responses, comparing them to top-selected answers and generating scores with confidence intervals. These scores are combined with multiple-choice results to create an overall confidence level for pass/fail decisions. High-confidence pass cases are automated, allowing candidates to proceed to Test 2 directly, with a small sample undergoing human quality control. Borderline cases and those with lower confidence are flagged for expert review. **To further streamline expert grading and ensure consistent feedback,** a Retrieval-Augmented Generation (RAG) system provides **pre-written feedback options** and relevant examples, particularly for ambiguous responses. A feedback loop is implemented, allowing expert graders to refine the semantic analysis model continuously. This hybrid approach optimizes grading speed, reduces expert workload, and ensures consistent, high-quality certification outcomes.
+
+```mermaid
+graph TB
+    subgraph User Interfaces
+        A[Candidate Testing <br> User Interface]:::baseline
+        C[Expert Grading <br> User Interface]:::baseline
+    end
+    classDef baseline baseline-style
+
+    B(Public API Gateway):::baseline
+    classDef gateway baseline-style
+
+    subgraph Candidate Registration
+        D[Candidate Registration Service <br> *Candidate Registration*]:::baseline
+        E[(Candidate Database)]:::baseline
+        D --> E
+    end
+    classDef candidateRegistration baseline-style
+
+    subgraph Aptitude Test Taking
+        F[Aptitude Test Taker <br> *Test Loader* <br> *Question Sender* <br> *Answer Capture* <br> *Test Timer*]:::baseline
+        N[(Aptitude Test Database <br> *see Admin*)]:::baseline
+        N --> F
+    end
+    classDef aptitudeTestTaking baseline-style
+
+    subgraph Short Answer Grading
+        G[Aptitude Manual Capture <br> *Short Answer*]:::baseline
+        O[(Aptitude Test Ungraded <br> Database)]:::baseline
+        G --> O
+
+        subgraph AI Components - Phase 2 - Semantic Analysis
+            SemanticAnalysis[Semantic Analysis <br> Service <br> *Confidence Intervals*]:::phase2
+            TopAnswers[(Top Selected <br> Answers DB)]:::phase2
+            SemanticAnalysis --> TopAnswers
+            FeedbackLoop[(Expert Feedback <br> Loop)]:::phase2
+        end
+        classDef phase2 phase2-style
+
+        O --> SemanticAnalysis
+        SemanticAnalysis --> I
+        I --> FeedbackLoop
+
+        I[Aptitude Manual Grader <br> *Short Answer* <br> *Grade Consolidation*]:::baseline
+
+        subgraph AI Components - Phase 1 - Feedback Generation
+            RAG[RAG Service <br> *Pre-written Feedback*]:::phase1
+            Q[(Feedback Library <br> *Knowledge Base*)]:::phase1
+            RAG --> Q
+        end
+        classDef phase1 phase1-style
+        I --> RAG
+        RAG --> C
+
+
+        subgraph AI Components - Phase 3 - Automated Grading
+            AutoGradingLogic[Automated Grading <br> Logic]:::phase3
+            QualityControlSample[(Quality Control <br> Sample Queue)]:::phase3
+        end
+        classDef phase3 phase3-style
+        SemanticAnalysis --> AutoGradingLogic
+        AutoGradingLogic --> I
+        AutoGradingLogic --> QualityControlSample
+        AutoGradingLogic --> J
+    end
+    classDef shortAnswerGrading baseline-style
+
+
+    subgraph Multiple Choice Grading
+        H[Aptitude Auto Grader <br> *Multiple Choice*]:::baseline
+        N --> H
+        P[(Aptitude Test Grade <br> *see Admin*)]:::baseline
+        H --> P
+    end
+    classDef multipleChoiceGrading baseline-style
+
+    subgraph Candidate Status and Notification
+        J[Candidate Status Service <br> *Candidate Progress* <br> *see Test 2*]:::baseline
+        K[(Candidate Status Database <br> *see Test 2*)]:::baseline
+        J --> K
+        L[Candidate Aptitude Notification <br> *Candidate Aptitude Results*]:::baseline
+        P --> L
+        M[Email]:::baseline
+        L --> M
+    end
+    classDef candidateStatusNotification baseline-style
+
+
+    A --> B
+    C --> B
+    B --> D
+    B --> F
+    F --> G
+    F --> H
+    I --> J
+    H --> I
+    I --> L
+```
 
 ## References
 

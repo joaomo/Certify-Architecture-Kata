@@ -1,16 +1,14 @@
 # ADR: Intelligent Case Study Generation Using AI
 
 ## ADR ID: 004  
-## Date: 2024-02-14  
-## Status: Proposed
 
- 
+## Date: 2024-02-14  
+
+## Status: Proposed
 
 ## 1. Introduction
 
 Certifiable, Inc.'s SoftArchCert system is experiencing rapid growth in certification requests due to its expanding global influence. The company’s current process manually creates and updates a fixed set of architectural case studies, which is both time-intensive and vulnerable to staleness and security concerns. This ADR presents a solution to dynamically generate case studies using AI, balancing automated generation with human oversight.
-
- 
 
 ## 2. Context and Problem Statement
 
@@ -18,7 +16,7 @@ Certifiable, Inc.'s SoftArchCert system is experiencing rapid growth in certific
 
 ### Background
 
-Certifiable, Inc. offers software architecture certifications through the SoftArchCert system. The certification process involves two tests: Test 1, an aptitude test with multiple-choice and short-answer questions, and Test 2, where candidates create an architecture for a randomly assigned case study. Test 1's multiple-choice questions are auto-graded, while the short-answer questions are manually graded by expert software architects. 
+Certifiable, Inc. offers software architecture certifications through the SoftArchCert system. The certification process involves two tests: Test 1, an aptitude test with multiple-choice and short-answer questions, and Test 2, where candidates create an architecture for a randomly assigned case study. Test 1's multiple-choice questions are auto-graded, while the short-answer questions are manually graded by expert software architects.
 
 ### Problems Identified for Test 1 generation
 
@@ -43,10 +41,7 @@ The SoftArchCert system currently uses a fixed set of manually created architect
 
 Generative AI can be used to create dynamic, relevant, and varied case studies while incorporating human oversight for quality and security. Specific AI techniques—primarily through advanced prompt engineering—can be applied to ensure that the generated content meets certification standards.
 
- 
-
 ## 3. Alternatives Considered
-
 
 ### 3.1 General approaches
 
@@ -89,9 +84,7 @@ Generative AI can be used to create dynamic, relevant, and varied case studies w
   - Requires ongoing model tuning and dedicated human oversight.
   - Will require initial human effort to develop and refine prompt engineering techniques.
 
- 
-
-### 3.2 Prompt Engineering Techniques 
+### 3.2 Prompt Engineering Techniques
 
 To generate high-quality, context-aware case studies, we propose using a diverse set of prompt engineering techniques. Each technique is designed to address specific scenarios and can be tailored with guideline manuals that provide additional context and usage instructions for case study generation.
 
@@ -104,8 +97,6 @@ To generate high-quality, context-aware case studies, we propose using a diverse
 - **Cons:**  
   May lack depth for more complex scenarios.
 
- 
-
 ### 3.2.2 Few-Shot Learning
 
 **Description:** Supply 2–5 examples in the prompt to illustrate the desired output format and content.
@@ -114,8 +105,6 @@ To generate high-quality, context-aware case studies, we propose using a diverse
   Provides richer context, leading to more nuanced outputs.
 - **Cons:**  
   Requires more data preparation.
-
- 
 
 ### 3.2.3 Zero-Shot Learning
 
@@ -126,8 +115,6 @@ To generate high-quality, context-aware case studies, we propose using a diverse
 - **Cons:**  
   Increased risk of less targeted output.
 
- 
-
 ### 3.2.4 Multi-Turn Prompting
 
 **Description:** Engage the LLM in an iterative dialogue, refining the output in multiple steps.
@@ -136,8 +123,6 @@ To generate high-quality, context-aware case studies, we propose using a diverse
   Iterative refinement yields highly detailed and quality outputs.
 - **Cons:**  
   Requires additional computational resources and time.
-
- 
 
 ### 3.2.5 Contextual Prompting with Guideline Manuals
 
@@ -195,53 +180,56 @@ Now, explain the benefits of using serverless architecture."
 ### 3.4.1 One-Shot Learning
 
 **Example Prompt:**  
+
 ```
 "Generate a detailed case study where a mid-sized enterprise must update its legacy system to adopt a microservices architecture. 
 Example: The company’s monolithic ERP system requires modernization to improve scalability and resilience."
 ```
- 
 
 ### 3.4.2 Few-Shot Learning
 
 **Example Prompt:**  
+
 ```
 "Below are two examples of past architectural case studies:
 Example 1: A financial services firm migrated from a monolithic architecture to a microservices model to enhance transaction speed and reduce downtime.
 Example 2: A retail company adopted a serverless architecture to manage seasonal demand spikes.
 Now, generate a new case study where a healthcare provider needs to integrate legacy systems with cloud-native applications to enhance patient data security."
 ```
- 
 
 ### 3.4.3 Zero-Shot Learning
 
 **Example Prompt:**  
+
 ```
 "Generate an innovative architectural case study for a large-scale enterprise that faces challenges integrating emerging IoT technologies with its core data infrastructure. The case study should describe the problem, propose a solution, and outline validation metrics."
 ```
 
- 
-
 ### 3.4.4 Multi-Turn Prompting
 
 **Example Workflow:**  
+
 1. **Initial Request:**  
+
    ```
    "Draft an initial outline for an architectural case study involving a cloud migration strategy."
    ```
+
 2. **Refinement:**  
    After evaluation, send:  
+
    ```
    "Expand on the security challenges and propose detailed mitigation strategies."
    ```
+
 3. **Finalization:**  
    Continue refining until the desired depth and format are achieved.
-
- 
 
 ### 3.4.5 Contextual Prompting with Guideline Manuals
 
 **Guideline Manual for Use-Case Generation (Excerpt):**
 > **Guidelines for Architectural Case Study Generation:**  
+>
 > - **Objective:** Generate realistic, challenging, and industry-relevant case studies for architectural certification.
 > - **Content Requirements:**  
 >   - Clearly define the architectural challenge.
@@ -259,6 +247,7 @@ Now, generate a new case study where a healthcare provider needs to integrate le
 >   "A leading healthcare provider needs to migrate its legacy systems to a cloud-enabled environment while ensuring compliance with regional data privacy laws. The architectural case study should focus on secure data integration and rapid scalability within a strict 30-day timeframe."
 
 **Example Prompt:**  
+
 ```
 "Using the following guidelines:
 - Objective: Ensure a secure, scalable migration solution.
@@ -266,9 +255,6 @@ Now, generate a new case study where a healthcare provider needs to integrate le
 - Structure: Introduction, Problem Description, Proposed Solution, Validation Metrics.
 Generate an architectural case study for a multinational corporation facing legacy integration issues and needing compliance with international data regulations."
 ```
-
-
- 
 
 ## 4. Trade-Off Analysis and Economic Considerations
 
@@ -311,13 +297,11 @@ Generate an architectural case study for a multinational corporation facing lega
 
 ### 5.2.1 Short Answer Questions
 
-Given that there is no data on a potential risk of leakage of having a low variety of the aptitude test questions, the focus will be on the case studies. Although such many of the techniques for generating case studies will be applicable to generating short answer questions. 
+Given that there is no data on a potential risk of leakage of having a low variety of the aptitude test questions, the focus will be on the case studies. Although such many of the techniques for generating case studies will be applicable to generating short answer questions.
 
 ### 5.2.2 Case Studies
 
 Given the significant workload and resource constraints faced by Certifiable, Inc., the hybrid intelligent generation approach with human oversight is the most suitable option. This approach balances the benefits of AI-driven content generation with the assurance of expert quality control, ensuring that the case studies remain relevant, challenging, and secure. The diverse prompt engineering techniques will need to be evaluated to determine what is the best approach for generating case studies. The human review interface will play a crucial role in maintaining the quality and integrity of the generated content, ensuring that the certification process remains robust and credible.
-
- 
 
 ## 6. Proposed Implementation Strategy
 
@@ -325,6 +309,8 @@ Given the significant workload and resource constraints faced by Certifiable, In
 
 - **Develop a Prototype:**  
   Utilize a general purpose LLM (e.g., Claude Sonnet) with the prompt engineering module.
+  Find the best prompt engineering technique for generating case studies.
+
 - **Evaluation:**  
   Assess quality metrics (e.g., expert review acceptance > 80%, generation time < 5 minutes).
 
@@ -348,8 +334,6 @@ Given the significant workload and resource constraints faced by Certifiable, In
   Gradually incorporate AI-generated case studies, with continuous monitoring and periodic LLM retraining.
 - **Continuous Improvement:**  
   Use expert feedback and performance logs to further fine-tune the prompt library and LLM responses.
-
- 
 
 ## 7. Resulting Architecture
 
@@ -394,9 +378,9 @@ graph LR
         subgraph Intelligent Case Study Generation
             LLM[Large Language Gateway]
             PEM[Prompt Engineering Module]
-            HRI[Human Review Interface]
             IS[Integration Services]
-            DS[Data Storage]
+            HRI[Human Review Interface]
+            DS[Data Store for expert feedback]
         end
     end
     
@@ -415,17 +399,16 @@ graph LR
     AUI --> EPD
     AUI --> ATD
     AUI --> CSD
-    LLM --> PEM
-    PEM --> HRI
+    AUI --> HRI
     HRI --> IS
-    IS --> DS
-    IS --> CSD
+    IS --> PEM
+    PEM --> LLM
+    PEM --> CSD
+    HRI --> DS
 
     style SoftArchCert System fill:#f9f,stroke:#333,stroke-width:2px
     style Intelligent Case Study Generation fill:#bbf,stroke:#333,stroke-width:2px
 ```
-
- 
 
 ## 8. Conclusion
 

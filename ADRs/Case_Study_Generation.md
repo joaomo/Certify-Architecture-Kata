@@ -1,159 +1,359 @@
-# ADR: Intelligent Case Study Generation
+# ADR: Intelligent Case Study Generation Using AI
 
 ## ADR ID: 004  
-
-## Date: 2023-10-XX  
-
+## Date: 2024-02-14  
 ## Status: Proposed
 
----
+ 
 
 ## 1. Introduction
 
-Intelligent Case Study Generation for SoftArchCert Using AI
+Certifiable, Inc.'s SoftArchCert system is experiencing rapid growth in certification requests due to its expanding global influence. The company’s current process manually creates and updates a fixed set of architectural case studies, which is both time-intensive and vulnerable to staleness and security concerns. This ADR presents a solution to dynamically generate case studies using AI, balancing automated generation with human oversight.
 
----
+ 
 
 ## 2. Context and Problem Statement
 
-**Background:**  
-Certifiable, Inc.'s SoftArchCert system currently uses a fixed set of case studies for the architecture submission test (Test 2). These case studies are manually created and periodically revised by expert software architects. With the expansion of the certification program (anticipating a 5–10× increase in submissions) and the rapid evolution of industry practices, maintaining an up-to-date, diverse, and challenging portfolio of case studies has become increasingly difficult.
+### 2.1 Aptitude test questions
 
-**Problem:**  
+### Background
 
-- **Manual Effort:** Creating and updating case studies manually is resource-intensive and slow.  
-- **Content Staleness:** Pre-existing case studies risk becoming outdated as architectural practices and technologies evolve.  
-- **Security Concerns:** Fixed case studies may leak over time, reducing the exam's effectiveness and compromising the certification's integrity.
-- **Scalability:** Increasing candidate volume requires a larger and more varied set of case studies to ensure fairness and maintain exam integrity.
+Certifiable, Inc. offers software architecture certifications through the SoftArchCert system. The certification process involves two tests: Test 1, an aptitude test with multiple-choice and short-answer questions, and Test 2, where candidates create an architecture for a randomly assigned case study. Test 1's multiple-choice questions are auto-graded, while the short-answer questions are manually graded by expert software architects. 
 
----
+### Problems Identified for Test 1 generation
 
-## 3. Possible Solutions
+- **Risk of Leakage:** Reusing questions may lead to compromised exam integrity. Due to the short nature of these questions they represent a higher risk for leakage.
+- **Resource Intensive:** Number of available resources to generate tests is scarce.
+- **Financial Cost:** Although this test is not a primary concern, it can act as an effective filter for candidates avoiding the need for grading test 2.
 
-1. **Maintain Full Manual Case Study Creation:**  
-   - **Pros:** Ensures high domain quality and human creativity.  
-   - **Cons:** Does not scale with rapid candidate growth; susceptible to content staleness and increased workload on experts.
+### 2.2 Case studies
 
-2. **Fully Automated Generation Without Review:**  
-   - **Pros:** Maximum scalability and minimal human intervention.  
-   - **Cons:** Risk of generating case studies that are off-target, lack nuance, or may not align well with certification standards.
+### Background
 
-3. **Hybrid Intelligent Generation with Human Oversight (Chosen Option):**  
-   - **Pros:** Balances automation with quality control; AI generates diverse and timely case studies while experts review and fine-tune the outputs, ensuring security and relevance.  
-   - **Cons:** Increased system complexity and the need for an integrated review interface add to the overhead.
+The SoftArchCert system currently uses a fixed set of manually created architectural case studies for Test 2. With an anticipated 5–10× increase in submissions and rapid shifts in industry practices, it is no longer viable to rely solely on expert architects for updating and maintaining case studies. This is exacerbated by the need to ensure that the certification process remains secure, relevant, and scalable and the fact that only 5 expert architects are available for creating these case studies.
 
-4. **Template-Based Rule-Driven Generation:**  
-   - **Pros:** Deterministic and transparent outcomes.  
-   - **Cons:** Inflexible and unable to capture the creative and adaptive aspects of modern architectural challenges.
+### Problems Identified
 
----
+- **Manual Effort:** Manual creation and periodic updates are resource-intensive.
+- **Content Staleness:** Static case studies risk becoming outdated as architectural best practices evolve.
+- **Security Concerns:** Reused or fixed content may leak over time, compromising exam integrity.
+- **Scalability Issues:** An increased number of candidates demands a larger, more varied repository of case studies and only 5 experts exist with this role in the organization.
 
-## 4. Trade-Off Analysis
+### AI Opportunity
 
-1. **Automation vs. Human Oversight:**
-   - **Pros:** Automation scales well and reduces manual effort.
-   - **Cons:** Requires robust human oversight to ensure quality and relevance.
+Generative AI can be used to create dynamic, relevant, and varied case studies while incorporating human oversight for quality and security. Specific AI techniques—primarily through advanced prompt engineering—can be applied to ensure that the generated content meets certification standards.
 
-2. **Complexity vs. Maintainability:**
-   - **Pros:** A sophisticated system can handle diverse and dynamic content.
-   - **Cons:** Increased complexity requires ongoing maintenance and monitoring.
+ 
 
-3. **Scalability vs. Quality Assurance:**
-   - **Pros:** Automated generation scales effortlessly.
-   - **Cons:** Ensuring high-quality output necessitates rigorous review processes.
+## 3. Alternatives Considered
 
-4. **Flexibility vs. Determinism:**
-   - **Pros:** AI-generated content is flexible and adaptive.
-   - **Cons:** Requires careful prompt engineering and validation to avoid inconsistencies.
 
----
+### 3.1 General approaches
 
-## 5. Proposed Solution
+### Option 1: Maintain Full Manual Case Study Creation
 
-**Chosen Approach:**  
-Implement an Intelligent Case Study Generation module that:
+- **Pros:**  
+  - High-quality content with direct expert input ensuring domain accuracy.
+- **Cons:**  
+  - Does not scale as submission volume increases.
+  - Increased cost and risk of stale content.
 
-- Uses a fine-tuned Large Language Model (LLM) and prompt engineering to generate realistic, varied, and industry-relevant case studies.
-- Dynamically generates new case studies on demand or on a scheduled basis, incorporating the latest architectural trends and best practices.
-- Provides different levels of complexity tailored to candidate experience or exam difficulty.
-- Includes mechanisms for human review and feedback to ensure the generated case studies meet quality and security standards.
-- Integrates with the SoftArchCert system's administrative interfaces, allowing designated experts to approve, modify, or retire generated case studies.
+### Option 2: Fully Automated Generation Without Human Review
 
-### Components
+- **Pros:**  
+  - Maximum scalability and fast turnaround.
+- **Cons:**  
+  - Risk of generating off-target or overly generic case studies.
+  - Potential security and compliance issues due to inadequate content control.
+  - Very resource intensive to ensure AI-generated content meets certification standards.
+  - No guarantee that the content generated will be relevant or challenging.
+  - Reputational risk if the generated content is subpar.
 
-1. **Large Language Model (LLM):**
-   - **Technology:** OpenAI GPT-4 or similar
-   - **Purpose:** Generate diverse and realistic case studies based on prompt engineering.
-   - **Implementation Strategy:** Fine-tune the LLM using historical case studies and industry data to ensure relevance and accuracy.
+### Option 3: Template-Based Rule-Driven Generation
 
-2. **Prompt Engineering Module:**
-   - **Technology:** Custom Python scripts
-   - **Purpose:** Craft prompts that guide the LLM to produce high-quality case studies.
-   - **Implementation Strategy:** Develop a library of prompts that cover various architectural scenarios and complexities.
+- **Pros:**  
+  - Deterministic and easy to audit.
+- **Cons:**  
+  - Lacks the flexibility and creativity needed for evolving architectural challenges.
 
-#### Prompt Engineering Approaches
+### Option 4: **Hybrid Intelligent Generation with Human Oversight (Chosen Option)**
 
-1. **One-Shot Learning:**
-   - **Description:** Provide a single example in the prompt to guide the LLM in generating the desired output.
-   - **Pros:** Simple to implement and requires minimal data preparation.
-   - **Cons:** May not be sufficient for complex or nuanced case studies, leading to less accurate or relevant outputs.
-   - **Use Case:** Suitable for generating straightforward case studies with well-defined structures.
+- **Pros:**  
+  - Balances rapid AI-driven generation with expert quality control.
+  - Dynamically refreshes content based on current industry trends.
+  - Reduced expert workload: AI creates initial drafts; human reviewers ensure quality.
+  - Enhances security by generating more case studies and thus reducing the impact of a compromised case study.
 
-2. **Few-Shot Learning:**
-   - **Description:** Provide a few examples (typically 2-5) in the prompt to help the LLM understand the desired format and content.
-   - **Pros:** Balances simplicity and effectiveness, improving the quality and relevance of generated case studies.
-   - **Cons:** Requires more data preparation than one-shot learning but still manageable.
-   - **Use Case:** Ideal for generating more complex case studies that require a deeper understanding of context and structure.
+- **Cons:**  
+  - Increased system complexity due to the integration of multiple components.
+  - Requires ongoing model tuning and dedicated human oversight.
+  - Will require initial human effort to develop and refine prompt engineering techniques.
 
-3. **Zero-Shot Learning:**
-   - **Description:** Provide a detailed prompt without examples, relying on the LLM's pre-trained knowledge to generate the output.
-   - **Pros:** No need for example data, leveraging the LLM's extensive training.
-   - **Cons:** May result in less accurate or relevant outputs, especially for highly specific or complex scenarios.
-   - **Use Case:** Useful for exploratory generation or when example data is unavailable.
+ 
 
-4. **Multi-Turn Prompting:**
-   - **Description:** Engage the LLM in a multi-turn dialogue, refining the prompt and responses iteratively to achieve the desired output.
-   - **Pros:** Allows for iterative refinement, improving the quality and relevance of the generated content.
-   - **Cons:** More complex to implement and may require additional computational resources.
-   - **Use Case:** Suitable for generating highly detailed and nuanced case studies where initial prompts may need refinement.
+### 3.2 Prompt Engineering Techniques 
 
-5. **Contextual Prompting:**
-   - **Description:** Provide additional context or background information along with the prompt to guide the LLM in generating the output.
-   - **Pros:** Enhances the relevance and accuracy of the generated content by providing more context.
-   - **Cons:** Requires careful crafting of context information to avoid overwhelming the LLM.
-   - **Use Case:** Ideal for generating case studies that require a deep understanding of specific contexts or scenarios.
+To generate high-quality, context-aware case studies, we propose using a diverse set of prompt engineering techniques. Each technique is designed to address specific scenarios and can be tailored with guideline manuals that provide additional context and usage instructions for case study generation.
 
-### Implementation Strategy
+### 3.2.1 One-Shot Learning
 
-1. **Prototype Development:**
-   - Develop a prototype using a fine-tuned LLM and prompt engineering.
-   - Validate the prototype with a small set of historical case studies.
+**Description:** Provide a single example within the prompt to guide the model.
 
-2. **Human Review Interface:**
-   - Design and implement the review interface with features for expert feedback and approval.
-   - Ensure the interface is intuitive and integrates seamlessly with the generation module.
+- **Pros:**  
+  Simple and effective for straightforward scenarios.
+- **Cons:**  
+  May lack depth for more complex scenarios.
 
-3. **Integration Testing:**
-   - Conduct thorough testing to ensure all components work together as expected.
-   - Validate data flow and security between the generation module, review interface, and SoftArchCert system.
+ 
 
-4. **Pilot Program:**
-   - Run a pilot program to gather feedback from experts and candidates.
-   - Use the feedback to refine the generation process and review interface.
+### 3.2.2 Few-Shot Learning
 
-5. **Full Scale Rollout:**
-   - Gradually transition to using AI-generated case studies.
-   - Implement continuous monitoring, logging, and periodic re-training of the LLM.
+**Description:** Supply 2–5 examples in the prompt to illustrate the desired output format and content.
 
----
+- **Pros:**  
+  Provides richer context, leading to more nuanced outputs.
+- **Cons:**  
+  Requires more data preparation.
 
-## 6. Resulting Architecture
+ 
 
-### Overview
+### 3.2.3 Zero-Shot Learning
 
-The architecture for the Intelligent Case Study Generation module will leverage a combination of AI technologies, cloud infrastructure, and human-in-the-loop processes to ensure scalability, relevance, and quality. The solution will be designed to integrate seamlessly with the existing SoftArchCert system.
+**Description:** Provide a comprehensive and detailed prompt without any examples, relying on the LLM’s pre-trained expertise.
 
-### Architecture Diagram
+- **Pros:**  
+  Leverages the extensive background knowledge of the model.
+- **Cons:**  
+  Increased risk of less targeted output.
+
+ 
+
+### 3.2.4 Multi-Turn Prompting
+
+**Description:** Engage the LLM in an iterative dialogue, refining the output in multiple steps.
+
+- **Pros:**  
+  Iterative refinement yields highly detailed and quality outputs.
+- **Cons:**  
+  Requires additional computational resources and time.
+
+ 
+
+### 3.2.5 Contextual Prompting with Guideline Manuals
+
+**Description:** Provide background guidelines or a manual with detailed instructions alongside the prompt to ensure output quality and consistency.
+
+- **Pros:**  
+  Provides comprehensive context, ensuring that the generated case study adheres to specific quality and structural requirements.
+- **Cons:**  
+  A very detailed prompt might overwhelm the model if not carefully balanced; requires precise formatting of guidelines.
+
+### 3.3 Examples for short answer questions
+
+### 3.3.1 One-Shot Learning
+
+**Example Prompt:**  
+"Provide a short answer explaining the benefits of using microservices architecture over a monolithic architecture. Example: Microservices architecture allows for independent deployment and scaling of services, which improves flexibility and resilience."
+
+### 3.3.2 Few-Shot Learning
+
+**Example Prompt:**  
+
+"Below are two examples of short answer questions and their answers:
+
+What are the key principles of RESTful API design? Answer: RESTful API design principles include statelessness, client-server architecture, cacheability, layered system, and uniform interface.
+How does containerization benefit software deployment? Answer: Containerization provides consistency across multiple development, testing, and deployment environments, and improves resource utilization and isolation.
+Now, provide a short answer explaining the advantages of using a NoSQL database over a SQL database."
+
+### 3.3.3 Zero-Shot Learning
+
+**Example Prompt:**  
+"Explain the concept of eventual consistency in distributed systems."
+
+### 3.3.4 Multi-Turn Prompting
+
+**Example Prompt:**  
+
+"Explain the concept of eventual consistency in distributed systems."
+
+**Follow-up Prompt:**
+
+"Can you provide an example scenario where eventual consistency is beneficial?"
+
+### 3.3.5 Contextual Prompting with Guideline Manuals
+
+**Example Prompt:**  
+"Refer to the following guidelines for answering short answer questions:
+
+Be concise and to the point.
+Use technical terms accurately.
+Provide examples where applicable.
+Now, explain the benefits of using serverless architecture."
+
+### 3.4 Examples for case studies
+
+### 3.4.1 One-Shot Learning
+
+**Example Prompt:**  
+```
+"Generate a detailed case study where a mid-sized enterprise must update its legacy system to adopt a microservices architecture. 
+Example: The company’s monolithic ERP system requires modernization to improve scalability and resilience."
+```
+ 
+
+### 3.4.2 Few-Shot Learning
+
+**Example Prompt:**  
+```
+"Below are two examples of past architectural case studies:
+Example 1: A financial services firm migrated from a monolithic architecture to a microservices model to enhance transaction speed and reduce downtime.
+Example 2: A retail company adopted a serverless architecture to manage seasonal demand spikes.
+Now, generate a new case study where a healthcare provider needs to integrate legacy systems with cloud-native applications to enhance patient data security."
+```
+ 
+
+### 3.4.3 Zero-Shot Learning
+
+**Example Prompt:**  
+```
+"Generate an innovative architectural case study for a large-scale enterprise that faces challenges integrating emerging IoT technologies with its core data infrastructure. The case study should describe the problem, propose a solution, and outline validation metrics."
+```
+
+ 
+
+### 3.4.4 Multi-Turn Prompting
+
+**Example Workflow:**  
+1. **Initial Request:**  
+   ```
+   "Draft an initial outline for an architectural case study involving a cloud migration strategy."
+   ```
+2. **Refinement:**  
+   After evaluation, send:  
+   ```
+   "Expand on the security challenges and propose detailed mitigation strategies."
+   ```
+3. **Finalization:**  
+   Continue refining until the desired depth and format are achieved.
+
+ 
+
+### 3.4.5 Contextual Prompting with Guideline Manuals
+
+**Guideline Manual for Use-Case Generation (Excerpt):**
+> **Guidelines for Architectural Case Study Generation:**  
+> - **Objective:** Generate realistic, challenging, and industry-relevant case studies for architectural certification.
+> - **Content Requirements:**  
+>   - Clearly define the architectural challenge.
+>   - Include relevant industry context (e.g., legacy modernization, cloud migration, security compliance).
+>   - Present constraints such as project timelines, regulatory requirements, or system integration challenges.
+> - **Tone and Style:**  
+>   - Professional and technical.
+>   - Detailed with a step-by-step explanation of proposed solutions.
+> - **Output Structure:**  
+>   - **Introduction:** Briefly introduce the scenario.
+>   - **Problem Description:** Elaborate on the challenges.
+>   - **Proposed Solution:** Provide a detailed action plan.
+>   - **Validation Metrics:** Include criteria for measuring success.
+> - **Example:**  
+>   "A leading healthcare provider needs to migrate its legacy systems to a cloud-enabled environment while ensuring compliance with regional data privacy laws. The architectural case study should focus on secure data integration and rapid scalability within a strict 30-day timeframe."
+
+**Example Prompt:**  
+```
+"Using the following guidelines:
+- Objective: Ensure a secure, scalable migration solution.
+- Content: Include challenges related to legacy integration and data protection.
+- Structure: Introduction, Problem Description, Proposed Solution, Validation Metrics.
+Generate an architectural case study for a multinational corporation facing legacy integration issues and needing compliance with international data regulations."
+```
+
+
+ 
+
+## 4. Trade-Off Analysis and Economic Considerations
+
+### Automation vs. Human Oversight
+
+- **Automation Benefits:**  
+  - Scalable generation reduces expert workload.
+  - Fast turnaround with minimal manual input.
+
+- **Human Oversight Benefits:**  
+  - Maintains domain accuracy and quality.
+  - Acts as a safeguard against off-target or insecure output.
+
+### Complexity vs. Maintainability
+
+- **Complexity:**  
+  - Integration of the LLM, prompt engineering module, and human review interface increases initial complexity.
+  - Upfront investment in prompt engineering techniques and human review guidelines is required.
+- **Maintainability:**  
+  - Ongoing oversight is required, but streamlined workflows reduce the long-term expert time.
+  
+### Scalability vs. Quality Assurance
+
+- **Scalability:**  
+  - AI-driven generation scales cost-effectively with growing candidate numbers.
+- **Quality Assurance:**  
+  - Human-in-the-loop review ensures that generated content meets strict certification standards—a crucial element to protect the company’s credibility.
+
+## 5. Decision
+
+### 5.1 Assumptions
+
+- There is a general AI model service available that can generate text based on prompts that is on-par with recent generation models.
+- LLM finetuning is not cost effective and similar performance can be achieved by using the model as-is.
+- There are reviewing guidelines used by the experts to maintain consistency in grading across the 300 experts doing the reviews.
+- There is no evidence to support the claim that there is a low variety of questions in the aptitude test.
+- The cost of calling an AI model is not a significant factor in the decision-making process when compared to the potential time savings from reducing human effort.
+
+### 5.2 Rationale
+
+### 5.2.1 Short Answer Questions
+
+Given that there is no data on a potential risk of leakage of having a low variety of the aptitude test questions, the focus will be on the case studies. Although such many of the techniques for generating case studies will be applicable to generating short answer questions. 
+
+### 5.2.2 Case Studies
+
+Given the significant workload and resource constraints faced by Certifiable, Inc., the hybrid intelligent generation approach with human oversight is the most suitable option. This approach balances the benefits of AI-driven content generation with the assurance of expert quality control, ensuring that the case studies remain relevant, challenging, and secure. The diverse prompt engineering techniques will need to be evaluated to determine what is the best approach for generating case studies. The human review interface will play a crucial role in maintaining the quality and integrity of the generated content, ensuring that the certification process remains robust and credible.
+
+ 
+
+## 6. Proposed Implementation Strategy
+
+### 6.1 Prototype Development
+
+- **Develop a Prototype:**  
+  Utilize a general purpose LLM (e.g., Claude Sonnet) with the prompt engineering module.
+- **Evaluation:**  
+  Assess quality metrics (e.g., expert review acceptance > 80%, generation time < 5 minutes).
+
+### 6.2 Human Review Interface Development
+
+- **Design the Interface:**  
+  Build a human-in-the-loop review platform featuring versioning, audit logging, and simple modification capabilities.
+- **Integration:**  
+  Seamlessly connect to the existing SoftArchCert administrative workflows.
+
+### 6.3 Integration Testing and Pilot Program
+
+- **Integration Testing:**  
+  Validate data flows between the LLM, prompt module, human review interface, and core SoftArchCert system.
+- **Pilot Program:**  
+  Roll out a limited pilot with generated case studies and collect feedback to refine the process.
+
+### 6.4 Full Scale Rollout and Monitoring
+
+- **Phased Rollout:**  
+  Gradually incorporate AI-generated case studies, with continuous monitoring and periodic LLM retraining.
+- **Continuous Improvement:**  
+  Use expert feedback and performance logs to further fine-tune the prompt library and LLM responses.
+
+ 
+
+## 7. Resulting Architecture
+
+The following diagram illustrates how the Intelligent Case Study Generation module integrates with the existing SoftArchCert system:
 
 ```mermaid
 graph LR
@@ -192,7 +392,7 @@ graph LR
         end
 
         subgraph Intelligent Case Study Generation
-            LLM[Large Language Model]
+            LLM[Large Language Gateway]
             PEM[Prompt Engineering Module]
             HRI[Human Review Interface]
             IS[Integration Services]
@@ -201,26 +401,20 @@ graph LR
     end
     
     CAUI --> CD
-    
     EGUI --> EPD
     EGUI --> AGF
-
     ATUI --> ATD
     ATUI --> ATUD
     ATUI --> ATG
     ATG --> ATUD
-
     ASU --> CSD
     ASU --> AGF
-    
     CMD --> CDV
     CMD --> AGF
     CSG --> CDV
-
     AUI --> EPD
     AUI --> ATD
     AUI --> CSD
-
     LLM --> PEM
     PEM --> HRI
     HRI --> IS
@@ -229,3 +423,27 @@ graph LR
 
     style SoftArchCert System fill:#f9f,stroke:#333,stroke-width:2px
     style Intelligent Case Study Generation fill:#bbf,stroke:#333,stroke-width:2px
+```
+
+ 
+
+## 8. Conclusion
+
+Implementing a hybrid intelligent case study generation module within the SoftArchCert system offers significant benefits:
+
+- **Dynamic and Current Content:**  
+  AI-generated case studies remain in sync with the latest industry trends and practices, ensuring that the certification material is always relevant and challenging.
+  
+- **Cost and Time Efficiency:**  
+  By reducing the expert grading time by approximately 50%, the projected weekly grading cost drops from $80,000 to $40,000. The savings in expert hours and increased throughput translate to a favorable ROI.
+
+- **Scalability:**  
+  The AI-driven solution scales seamlessly with growing candidate volumes, addressing anticipated demand surges without compromising on quality.
+
+- **Enhanced Quality and Security:**  
+  The human-in-the-loop review process ensures that each generated case study meets stringent certification standards, reducing risks associated with outdated or insecure content.
+  
+- **Adaptability Through Advanced Prompting Techniques:**  
+  The implementation of multiple prompt engineering methods (one-shot, few-shot, zero-shot, multi-turn, and contextual prompting with guideline manuals) provides the flexibility to generate tailored case studies for a variety of scenarios and candidate levels.
+
+In summary, by transitioning from a static, manually maintained case study repository to a dynamic, AI-augmented system, Certifiable, Inc. can maintain its market leadership, enhance operational efficiency, improve candidate assessment quality, and secure the credibility of its certification process for the future.

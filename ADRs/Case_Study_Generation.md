@@ -303,6 +303,37 @@ Given that there is no data on a potential risk of leakage of having a low varie
 
 Given the significant workload and resource constraints faced by Certifiable, Inc., the hybrid intelligent generation approach with human oversight is the most suitable option. This approach balances the benefits of AI-driven content generation with the assurance of expert quality control, ensuring that the case studies remain relevant, challenging, and secure. The diverse prompt engineering techniques will need to be evaluated to determine what is the best approach for generating case studies. The human review interface will play a crucial role in maintaining the quality and integrity of the generated content, ensuring that the certification process remains robust and credible.
 
+### 5.3 Changed Generation process
+
+### 5.3.1 Additional components
+
+- **Prompt Engineering Module:**  
+  Develop a module that can generate prompts for the LLM based on the selected technique.
+- **Human Review Interface:**
+  Create an interface that allows human reviewers to:
+  - generate new case studies using a custom prompt or resorting to the prompt library.
+  - provide feedback on the generated case studies. And update them, either through the prompt library or directly.
+  - review the generated case studies and provide feedback on their quality.
+  - update the prompt library and guideline manuals based on the feedback received.
+
+- **Integration Services:**
+  Establish data flows between the LLM, prompt module, human review interface, and core SoftArchCert system.
+- **Data Store:**
+  Implement a data store to:
+  - Capture expert feedback.
+  - Capture performance logs for continuous improvement.
+  - Store prompt libraries and guideline manuals.
+- **LLM Gateway:**  
+  Utilize a general-purpose LLM conforming to the OpenAI standard (e.g., Claude Sonnet) with the prompt engineering module.
+
+### 5.3.2 New generation workflow
+
+With the new hybrid intelligent generation process, the Intelligent Case Study Generation module would generate the initial case studies using the LLM and prompt engineering module. These generated case studies would then be reviewed by human experts through the Human Review Interface. The feedback and modifications made by the human reviewers would be stored in the Data Store for Expert Feedback, allowing for continuous improvement of the generation process.
+
+Depending on the prompt engineering technique used, the Case study database may be used to fetch similar case studies and/or grading guidelines to generate the case studies.
+
+
+
 ## 6. Proposed Implementation Strategy
 
 ### 6.1 Prototype Development
@@ -312,7 +343,11 @@ Given the significant workload and resource constraints faced by Certifiable, In
   Find the best prompt engineering technique for generating case studies.
 
 - **Evaluation:**  
-  Assess quality metrics (e.g., expert review acceptance > 80%, generation time < 5 minutes).
+  Since the key objective is to enhance the expert review process and reduce the manual workload, the prototype should be evaluated based on the following criteria:
+  - Reduction in case study generation time (e.g., 50% reduction).
+  - Generation of diverse and relevant case studies.
+  - Generation time per case study (e.g., < 5 minutes).
+  - Quality of generated content based on expert feedback.
 
 ### 6.2 Human Review Interface Development
 
@@ -331,7 +366,7 @@ Given the significant workload and resource constraints faced by Certifiable, In
 ### 6.4 Full Scale Rollout and Monitoring
 
 - **Phased Rollout:**  
-  Gradually incorporate AI-generated case studies, with continuous monitoring and periodic LLM retraining.
+  Gradually incorporate AI-generated case studies, with continuous monitoring.
 - **Continuous Improvement:**  
   Use expert feedback and performance logs to further fine-tune the prompt library and LLM responses.
 
@@ -380,7 +415,7 @@ graph LR
             PEM[Prompt Engineering Module]
             IS[Integration Services]
             HRI[Human Review Interface]
-            DS[Data Store for expert feedback]
+            DS[Data Store]
         end
     end
     

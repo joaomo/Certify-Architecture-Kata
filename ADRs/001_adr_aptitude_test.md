@@ -1,4 +1,4 @@
-# ADR - Case Study Short Answer Grading
+# ADR - Scaling Short-Answer Grading with Semantic Similarity and RAG
 
 ## ADR ID: 001
 

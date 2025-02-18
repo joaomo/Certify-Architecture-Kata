@@ -76,7 +76,7 @@ graph
 
 ## Decision
 
-Certifiable, Inc. will implement a hybrid AI-assisted grading system for Test 1 short-answer questions to enhance efficiency and maintain grading quality.  The system will employ semantic similarity models to evaluate candidate short-answer responses by comparing them to a set of top-selected answers.  These semantic analysis results, combined with automatically graded multiple-choice scores, will generate proposed pass/fail decisions for expert software architect review.  Critically, to expedite the expert review process and ensure consistent feedback, a Retrieval-Augmented Generation (RAG) system will be integrated to provide **pre-written feedback options** for experts to choose from, alongside highlighting specific areas in candidate responses that require their focused attention.  Expert graders will retain final decision-making authority, leveraging the AI-provided suggestions and feedback to efficiently and accurately assess candidate performance.
+Certifiable, Inc. will implement a hybrid AI-assisted grading system for Test 1 short-answer questions to enhance efficiency and maintain grading quality. The system will employ semantic similarity models to evaluate candidate short-answer responses by comparing them to a set of top-selected answers. These semantic analysis results, combined with automatically graded multiple-choice scores, will be used to determine the grading path.  A Retrieval-Augmented Generation (RAG) system will be integrated to expedite the expert review process and ensure consistent feedback. For cases where both the semantic similarity model and multiple-choice scores indicate high confidence in a passing grade, the system will automatically approve the candidate. For all other cases, including borderline results and those with lower confidence scores, expert graders will retain final decision-making authority, leveraging the AI-provided suggestions and feedback to efficiently and accurately assess candidate performance.
 
 ### Option Comparison: AI-Assisted Short-Answer Grading for Test 1
 
@@ -253,19 +253,73 @@ It is assumed that the AI solutions can be seamlessly integrated with existing t
 **Data:**
 We assume the data from the completed tests includes annotations indicating pass/fail status and links to the feedback provided to candidates for each short-answer question.
 
+**Short Answer Length:**
+We assume that candidate responses to short-answer questions will be no longer than 200 words.  For responses shorter than 50 words, the system may not utilize the RAG component for highlighting specific areas within the answer, and may instead rely primarily only on semantic classification.
+
 ## Implementation Plan (Option 1)
 
 ### Phase 1: Feedback Generation Setup
 
-During this phase, the RAG system will be configured to generate pre-written feedback based on candidate responses, utilizing a library of feedback developed for both approval and other cases. The system will provide experts with options for feedback, allowing them to select the most appropriate response to send to candidates. This setup will significantly reduce the time experts spend crafting individual feedback, streamlining the review process. Rigorous testing will be conducted to ensure that the generated feedback is relevant, clear, and actionable.
+During this phase, the RAG system will be configured and integrated to perform two key functions:
+
+1.  **Generate Pre-written Feedback Options:** Based on the candidate's response to a *specific question* and its semantic similarity score, the RAG system will provide a selection of pre-written feedback statements *relevant to that question*. These statements will focus on aspects of the answer's correctness, completeness, and clarity, *but will not include an overall pass/fail judgment*.
+
+2.  **Highlight Areas for Expert Attention (for answers > 50 words):** For candidate responses exceeding 50 words, the RAG system will analyze the text to identify potential areas of concern, strengths, or inconsistencies. These areas will be highlighted within the expert grading interface, drawing the grader's attention to specific parts of the response that may require more careful consideration. This is *not* a final grading decision, but rather a tool to assist expert review.
+
+The RAG system will utilize the LLM Gateway (see ADR 4 TODO). The system will be integrated into the expert grading interface, presenting these options alongside the candidate's response and the semantic similarity score (from Phase 2). Experts can select, modify, or write their own feedback, but the RAG suggestions are intended to significantly reduce the time spent crafting feedback from scratch. The overall pass/fail decision and comprehensive feedback will be determined by the expert after reviewing all questions.
+
+**Tests:**
+
+*   **Expert Feedback Quality & Efficiency Assessment:**
+    *   1 or 2 designated experts will create a representative sample of 50 short-answer responses, varying in quality and length, *across different questions*, and define the ideal answer and feedback for *each question*.
+    *   A group of 10 experts (from the 300) will grade these responses *without* using the RAG system. This establishes a baseline for grading time and feedback quality.
+    *   The *same* group of 10 experts will then grade the *same* 50 responses *using* the RAG system (both pre-written feedback and highlighting).
+    * We will measure:
+        1.  **Average Grading Time Reduction:** The difference in average time spent grading each response with and without RAG.
+        2.  **Feedback Quality Score:** A separate group of 3 experts (from the 300, and not involved in the grading) will blindly evaluate the quality of the feedback provided in both the baseline and RAG-assisted scenarios. Finally the designated experts will evaluate the results accessing for clarity, relevance, and actionability of the feedback *for each question*.
+
+**Success Criteria:**
+
+*   **Time Reduction:** The average grading time per response is reduced by at least 40% when using the RAG system compared to the baseline.
+*   **Feedback Quality Maintenance:** The average feedback quality score remains the same or improves (within a tolerance of +/- 5%) when using the RAG system compared to the baseline.
 
 ### Phase 2: Integration of Semantic Analysis and Feedback Loop
 
-In this phase, the semantic similarity analysis will be fully integrated into the grading system. The analysis will evaluate candidate responses against the predefined set of top-selected answers, providing automated grading suggestions along with confidence intervals for each response. Experts will receive these suggestions alongside the pre-written feedback generated in the previous phase, allowing them to make informed decisions on whether to agree with or override the AI's grading suggestions. A feedback loop will be established, where experts can provide input on the AI's performance, particularly in cases where the confidence interval is low or where the AI's suggestions are disputed. This feedback will be used to continuously refine the semantic analysis model and improve its accuracy over time. Additionally, when the semantic analysis fails to provide a clear grading decision, the system will retrieve relevant examples from the RAG knowledge base to assist experts in making informed decisions. This approach ensures that the grading process remains efficient while maintaining high standards of accuracy and quality
+In this phase, the semantic similarity analysis will be fully integrated into the grading system. The analysis will evaluate candidate responses against the predefined set of top-selected answers, providing automated grading suggestions (pass/fail recommendations) along with confidence scores for each response. Experts will receive these suggestions alongside the RAG-generated feedback options (from Phase 1) in the grading interface. A feedback loop will be established, allowing experts to flag cases where they disagree with the AI's suggestion or when the confidence score is low. This feedback, along with the expert's final grading decision, will be used to refine the semantic similarity model.
+
+**Tests:**
+
+*   **Semantic Analysis Accuracy and Expert Agreement:**
+    *   Using a new representative sample of 100 short-answer responses (distinct from the Phase 1 sample), the semantic similarity model will generate pass/fail recommendations and confidence scores.
+    *   A group of 10 experts (the same group used in Phase 1) will independently grade these responses, using the RAG-generated feedback options but *without* seeing the AI's recommendations.
+    *   We will measure:
+        1.  **AI Accuracy:** The AI's pass/fail recommendation matches the expert's final decision at least 95% of the cases.
+        2.  **Expert Override Rate:** The percentage of responses where experts override the AI's recommendation, categorized by the AI's confidence score (high, medium, low).
+
+**Success Criteria:**
+
+*   **AI Accuracy:** The AI's pass/fail recommendations achieve at least 90% accuracy compared to the expert's final decisions.
+*   **Targeted Override Rate:** The expert override rate is below 5% for responses where the AI's confidence score is "high," and below 20% for medium. This indicates that experts are generally agreeing with the AI when it's confident, and that the confidence score is a useful indicator. There is no defined override rate to low confidence score.
+*   **Semantic Analysis Refinement:** The expert feedback (flags and final grading decisions), along with the corresponding candidate responses and scores, will be stored in a database and used to retrain and refine the semantic similarity model. This iterative process will improve the model's accuracy and reduce the need for expert overrides in the future. This refinement will be an ongoing process.
 
 ### Phase 3: Automated Grading with Quality Control
 
-In this phase, the system will leverage the results from the semantic similarity analysis alongside the multiple-choice scores to identify cases where there is strong evidence indicating that a candidate passes. For these cases, the system will automate the grading process, allowing candidates to move on to the second test without human intervention. To maintain quality control, a small sample of these automated decisions will be sent to human experts for review, ensuring that the system's accuracy is upheld. Additionally, for borderline cases where the confidence in the semantic analysis is lower or where there is potential for false negatives, human graders will be involved to assess the responses. If the human score is high in these borderline cases, candidates will also be allowed to progress to the second test. This approach balances efficiency with the need for oversight, ensuring that high-quality standards are maintained throughout the grading process.
+In this phase, the system will combine the semantic similarity score (from Phase 2) and the multiple-choice score to make automated pass/fail decisions. Cases with high confidence in both scores will be automatically graded as "pass," allowing candidates to proceed to Test 2. A random sample of 5% of these automated passes will be sent to a quality control queue for review by a group of 3 experts. For cases where either the semantic similarity confidence or the multiple-choice score is below a predefined threshold, the response will be flagged for manual review by an expert.
+
+**Tests:**
+
+*   **Automated Grading Accuracy and False Positive/Negative Rates:**
+    *   After implementing the automated grading logic, we will analyze a historical dataset of at least 500 graded Test 1 submissions (with known pass/fail outcomes).
+    *   We will measure:
+        1.  **False Positive Rate:** The percentage of candidates who were incorrectly passed by the automated system (should have failed).
+        2.  **False Negative Rate:** The percentage of candidates who were incorrectly failed by the automated system (should have passed).
+        3. **Accuracy:** Percentage of correct automated decisions.
+
+**Success Criteria:**
+
+*   **Low False Positive Rate:** The false positive rate is below 5%. This is crucial for maintaining the integrity of the certification. In case 1 out of 20 moves incorrectly to the second phase the time saved in experts reviews in the first test is still higher than the necessary to review the solution presented by the candidate in the second test.
+*   **Acceptable False Negative Rate:** The false negative rate is below 0.1%. This shouldn't happen as removes trust on the company and generates work on revision processes.
+*   **Accuracy**: The accuracy of the automatic grading should be greater than 95%
 
 ---
 
@@ -374,6 +428,33 @@ graph TB
     H --> I
     I --> L
 ```
+
+## Expected Outcomes and Impact
+
+The implementation of this AI-assisted grading system is expected to deliver significant improvements in efficiency, cost-effectiveness, and consistency, while maintaining the high standards of accuracy and integrity required for Certifiable, Inc.'s certification program.
+
+**Overall Success Criteria:**
+
+*   **Significant Reduction in Grading Time:** The primary measure of success will be a substantial reduction in the average time required to grade *all* Test 1 submissions. We aim for an overall reduction of at least 80% in grading time compared to the fully manual process. This includes both the automated grading of high-confidence cases and the time savings for experts using RAG in the remaining cases.
+*   **Maintain or Improve Grading Accuracy:** The overall accuracy of the grading process (combining automated and human-reviewed cases) must remain at or above 98%, as measured against a top selected answers dataset graded by designated experts.
+* **Low False Positive Rate:** Below 5%
+* **Low False Negative Rate:** Bellow 0.1%
+
+**Time Savings for Humans:**
+
+For the Test 1 submissions that still require human review, the use of RAG (pre-written feedback and highlighting) is projected to reduce the average time spent by human experts by at least 60%. This translates to significant cost savings and allows experts to focus on more complex and nuanced assessments.
+
+Initially, with 20% of cases fully automated and a 60% reduction in human review time for the remaining 80%, the total time spent grading is reduced to 32% of the original time required for fully manual grading.
+
+Furthermore, after initial tuning and continuous improvement of the thresholds, RAG, and semantic analysis processes, we aim to automate 40% of passing cases and achieve a 70% reduction in human review time for the remaining cases. This would result in a total grading time of just 18% of the original fully manual grading time.
+
+
+**Other Impacts:**
+
+*   **Improved Feedback Consistency:** The use of RAG-generated feedback options is expected to improve the consistency of feedback provided to candidates, ensuring fairness and reducing ambiguity.
+*   **Faster Turnaround Times:** The overall reduction in grading time will lead to faster turnaround times for candidates, improving their experience and allowing them to progress through the certification process more quickly.
+*   **Reduced Operational Costs:**  The decreased reliance on manual grading will lead to significant cost savings in the long run, as fewer expert grader hours will be required.
+*   **Scalability:** The AI-assisted system is designed to be scalable, allowing Certifiable, Inc. to handle the anticipated 5-10X increase in test submissions without a corresponding increase in costs or delays.
 
 ## References
 

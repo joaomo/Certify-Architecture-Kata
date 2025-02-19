@@ -67,10 +67,9 @@ This hybrid approach balances comprehensive analysis with cost efficiency while 
 
 #### 3.3.1 Leak Detection: Embedding-Based Similarity Search Workflow
 
-To detect leaked content, the system will use an embedding-based similarity search to compare test question
-embeddings with crawled web content.
-To gather the web content it is important to feed search engines on the web with queries containing interlectual property of the company.
-Therefore searching for potential leaks using the full questions or stored answers from the database is not an option.
+The system will implement an embedding-based similarity search mechanism to identify potentially leaked content by comparing embeddings of test questions against crawled web content. 
+When gathering web content, we must carefully avoid exposing any company intellectual property to search engines.
+For this reason, we cannot directly search using complete questions or answers from our database, as this would risk revealing proprietary content.
 
 Instead, we'll use an LLM to generate possible search queries that represent the content of the questions, but do not give away the actual question. These search queries can include keywords, domains, or other relevant information that can be used to retrieve similar content from the web.
 
@@ -79,6 +78,16 @@ The system will then compare those embeddings using a vector similarity search.
 If the similarity score is above a certain threshold, the system will flag the question as potentially leaked.
 
 In a final step, an expert will review the flagged question together with the web content to make a final decision.
+
+**Advantages:**  
+- **Robustness to Paraphrasing:** Able to detect semantically similar content even if phrasing changes.
+- **Context-Aware:** Captures the meaning rather than just surface text.
+- **Flexibility:** We can adjust similarity thresholds and experiment with different embedding models for optimal performance.
+
+**Disadvantages:**  
+- **False Positives/Negatives:** Fine-tuning the similarity threshold can be challenging; risk both missing leaks and flagging false alarms.
+- **Dependency on Up-to-date Crawling:** Success depends on the recency and comprehensiveness of web crawling.
+ 
 
 The following workflow illustrates the process:
 
@@ -119,6 +128,15 @@ To identify outdated questions, the system will use a Large Language Model (LLM)
 For this both the question and the retrieved content about state-of-the-art knowledge will be combined to generate a prompt for the LLM.
 This approach will help evaluate the relevance of test questions by integrating recent context from books, blogs, and conference materials.
 After the LLM has classified the question as outdated or current, an expert will review the flagged questions together with the context to make a final decision.
+
+**Advantages:**
+- **Minimal Maintenance Required:** Utilizes existing LLMs through the LLM Gateway, relying on prompt engineering rather than complex RAG system maintenance
+- **Dynamic Response:** The system can adapt rapidly as new context is included in the prompt, leading to more time-relevant output.
+
+**Disadvantages:**
+- **Prompt Dependency:** The quality and consistency of the output heavily rely on the prompt formulation and the quality of retrieved texts.
+- **Potential Inconsistency:** Base model responses may vary significantly and require thorough human review for critical certification questions, as model behavior cannot be perfectly controlled.
+
 
   ```mermaid
   ---
@@ -169,6 +187,15 @@ After the LLM has classified the question as outdated or current, an expert will
   3. Usage of face recognition technology to match the candidate with the uploaded photo ID
 
   Publicly available libraries will be used for this purpose.
+
+**Advantages:**
+- **Simplicity:** Straightforward to implement if you already collect metadata and behavioral logs.
+- **Efficiency:** Lightweight computationally, enabling near real-time detection.
+- **Transparency and Explainability:** Rules and metrics are easy to explain in investigations.
+
+**Disadvantages:**
+- **Evasion Risk:** Skilled fraudsters can potentially vary their metadata or mimic normal behavior.
+- **Static Rules:** Hard-coded rules may miss evolving strategies or generate false positives if normal behavior changes seasonally.
 
 ### 3.3 Combining the components / Roadmap:
 Initially we'll use the statistical analysis to identify questions that are statistical outliers, flag them accordingly and send them forward for further analysis (e.g to detect leaks or outdated content).

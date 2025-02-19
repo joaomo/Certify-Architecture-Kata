@@ -34,12 +34,21 @@ At a later stage, the ADR will be extended to cover the case study part as well.
 
 ## 3. Decision
 
-### 3.1 Chosen Approach
+### 3.1 Assumptions
+
+- Sufficient historical test data is available for training and validating the analytical models.
+- To detect outdated questions, a curated corpus of up-to-date books, blogs, and conference materials is accessible.
+- In the existing architecture we already have a service for statistical analysis in place that is capable of detecting statistical outliers.
+- An external service for identity verification based on photo ID and face recognition is available on the market.
+- A company wide accessable LLM Gateway is available for LLM-based approaches.
+
+
+### 3.2 Chosen Approach
 
 Adopt a hybrid, AI-assisted test analysis framework that meets all key requirements in a cost-effective manner by incorporating the following components:
 
 - **Statistical Analysis:**
-  Detects outlier performance metrics using predefined thresholds (e.g., success rates above 95% or below 20%).
+  We'll continue using the existing statistical analysis service to identify questions with unusually high or low success rates. This service calculates key metrics (e.g., success rate, average time to answer, standard deviation) for every question and flags outliers based on predefined thresholds.
 
 - **Embedding-Based Similarity Search:**
   Compares test question embeddings with crawled web content to flag potential leaks. The typical workflow for this component is outlined in [Embedding-Based Similarity Search Workflow for Leak Detection](#embedding-based-similarity-search-workflow-for-leak-detection).
@@ -54,9 +63,9 @@ Adopt a hybrid, AI-assisted test analysis framework that meets all key requireme
 
 This hybrid approach balances comprehensive analysis with cost efficiency while controlling hardware and maintenance demands.
 
-### 3.2. Detailed Description of Components
+### 3.3 Detailed Description of New Components
 
-#### 3.2.1 Leak Detection: Embedding-Based Similarity Search Workflow
+#### 3.3.1 Leak Detection: Embedding-Based Similarity Search Workflow
 
 To detect leaked content, the system will use an embedding-based similarity search to compare test question
 embeddings with crawled web content.
@@ -77,7 +86,7 @@ The following workflow illustrates the process:
 ---
 title: "Embedding-Based Similarity Search for Leak Detection"
 ---
-flowchart TD
+flowchart LR
     A[(Aptitude<br>Test<br>Questions)]
     B["LLM Gateway<br>Generate<br>Search Query"]
     C["Generate Embedding<br>for Aptitude Test Question"]
@@ -104,7 +113,7 @@ flowchart TD
     H --> I
     I --> J
 ```
-#### 3.2.2 Identifing outdated questions: LLM with Contextual Prompting and Knowledge Retrieval Workflow
+#### 3.3.2 Identifing outdated questions: LLM with Contextual Prompting and Knowledge Retrieval Workflow
 
 To identify outdated questions, the system will use a Large Language Model (LLM) that is accessable via an LLM Gateway. The LLM will be enhanced with contextual prompting and knowledge retrieval.
 For this both the question and the retrieved content about state-of-the-art knowledge will be combined to generate a prompt for the LLM.
@@ -115,7 +124,7 @@ After the LLM has classified the question as outdated or current, an expert will
   ---
   title: "Hybrid LLM with Contextual Prompting"
   ---
-  flowchart TD
+  flowchart LR
       Q2[(Aptitude<br>Test<br>Questions)]
       RC3["Raw Context<br>(Books, Blogs, Conferences)"]
       SR3["Search/Retrieval Module<br>(Basic keyword/vector search)"]
@@ -139,7 +148,7 @@ After the LLM has classified the question as outdated or current, an expert will
       Expert --> OutdatedCfrmd
   ```
 
- #### 3.2.3 Fraud Protection: Behavioral and Metadata Analysis
+ #### 3.3.3 Fraud Protection: Behavioral and Metadata Analysis
 
   To detect fraudulent behavior, the system will rely on standard techniques, which are well established in the industry, given that fraudulent test takers are no single case. For this system Certifiable, Inc. will take the approach of the Linux Foundation as an example. They have years of experiences in the field offering certifcations like [CKA](https://training.linuxfoundation.org/certification/certified-kubernetes-administrator-cka/), [CKAD](https://training.linuxfoundation.org/certification/certified-kubernetes-application-developer-ckad/) or [LFCS](https://training.linuxfoundation.org/certification/linux-foundation-certified-sysadmin-lfcs/).
 
@@ -173,7 +182,7 @@ The behavioral and metadata analysis will be used independently to detect fraudu
 ---
 title: "Combined Components / Roadmap"
 ---
-flowchart TD
+flowchart LR
     %% INITIAL PHASE
     A[(Test Question)]
     A --> B["Statistical Analysis"]

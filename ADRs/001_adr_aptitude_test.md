@@ -287,7 +287,7 @@ graph LR
 
 #### 2. Option 2: RAG for Evaluation (Alternative Solution)
 
-**One-line Description:** This option proposes using RAG, potentially with LLMs, for direct AI-driven evaluation of short-answer questions, with human review for validation and ambiguous cases, and potential automation for high-confidence outcomes.
+**One-line Description:** This option proposes using RAG to enhance the  LLM  response for direct AI-driven evaluation of short-answer questions, with human review for validation and ambiguous cases, and potential automation for high-confidence outcomes.
 
 ```mermaid
 graph LR

@@ -503,4 +503,5 @@ In summary, while the transition to an AI-augmented case study generation system
 
 ## 9. References
 
-Add references for Bert and ElseR here.
+- Sentence-BERT: Sentence Embeddings using Siamese BERT-Networks. Nils Reimers, Iryna Gurevych. 2019. https://arxiv.org/abs/1908.10084
+- [Introducing Elastic Learned Sparse Encoder Representations (ELSER)](https://www.elastic.co/search-labs/blog/elastic-learned-sparse-encoder-elser-retrieval-performance)

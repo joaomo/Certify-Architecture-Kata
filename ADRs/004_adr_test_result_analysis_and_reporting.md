@@ -6,13 +6,9 @@
 
 ## Status: Proposed
 
----
-
 ## 1. Introduction
 
 Certifiable, Inc. is committed to maintaining rigorous and current certification standards for Software Architects. This ADR proposes an automated test analysis and reporting system that leverages statistical methods, embedding-based similarity searches, and LLM-enhanced evaluations. The goal is to detect atypical question performance, leaked content, outdated exam materials, and potential fraudulent activities, thereby ensuring both the integrity and efficiency of our certification process.
-
----
 
 ## 2. Context and Problem Statement
 
@@ -35,11 +31,10 @@ But more importantly, should the test be too easy, candidates that are not ready
 
 At a later stage, the ADR will be extended to cover the case study part as well.
 
----
 
 ## 3. Decision
 
-**Chosen Approach:**
+### 3.1 Chosen Approach
 
 Adopt a hybrid, AI-assisted test analysis framework that meets all key requirements in a cost-effective manner by incorporating the following components:
 
@@ -59,8 +54,11 @@ Adopt a hybrid, AI-assisted test analysis framework that meets all key requireme
 
 This hybrid approach balances comprehensive analysis with cost efficiency while controlling hardware and maintenance demands.
 
-### Leak Detection: Embedding-Based Similarity Search Workflow
-To detect leaked content, the system will use an embedding-based similarity search to compare test question 
+### 3.2. Detailed Description of Components
+
+#### 3.2.1 Leak Detection: Embedding-Based Similarity Search Workflow
+
+To detect leaked content, the system will use an embedding-based similarity search to compare test question
 embeddings with crawled web content.
 To gather the web content it is important to feed search engines on the web with queries containing interlectual property of the company.
 Therefore searching for potential leaks using the full questions or stored answers from the database is not an option.
@@ -106,7 +104,7 @@ flowchart TD
     H --> I
     I --> J
 ```
-### Identifing outdated questions: LLM with Contextual Prompting and Knowledge Retrieval Workflow
+#### 3.2.2 Identifing outdated questions: LLM with Contextual Prompting and Knowledge Retrieval Workflow
 
 To identify outdated questions, the system will use a Large Language Model (LLM) that is accessable via an LLM Gateway. The LLM will be enhanced with contextual prompting and knowledge retrieval.
 For this both the question and the retrieved content about state-of-the-art knowledge will be combined to generate a prompt for the LLM.
@@ -141,18 +139,18 @@ After the LLM has classified the question as outdated or current, an expert will
       Expert --> OutdatedCfrmd
   ```
 
- ### Fraud Protection: Behavioral and Metadata Analysis
+ #### 3.2.3 Fraud Protection: Behavioral and Metadata Analysis
 
   To detect fraudulent behavior, the system will rely on standard techniques, which are well established in the industry, given that fraudulent test takers are no single case. For this system Certifiable, Inc. will take the approach of the Linux Foundation as an example. They have years of experiences in the field offering certifcations like [CKA](https://training.linuxfoundation.org/certification/certified-kubernetes-administrator-cka/), [CKAD](https://training.linuxfoundation.org/certification/certified-kubernetes-application-developer-ckad/) or [LFCS](https://training.linuxfoundation.org/certification/linux-foundation-certified-sysadmin-lfcs/).
 
   The following steps will be taken:
 
-  #### Standard Techniques:
-    - Monitor completion times, IP addresses, and other metadata
-    - Fingerprinting: Typing patterns, mouse movements, and other behavioral biometrics
-    - Flag suspicious patterns (e.g., rapid completion, multiple logins from different locations).
+  **Standard Techniques:**
+  - Monitor completion times, IP addresses, and other metadata
+  - Fingerprinting: Typing patterns, mouse movements, and other behavioral biometrics
+  - Flag suspicious patterns (e.g., rapid completion, multiple logins from different locations).
 
-  #### Identity verification process:
+  **Identity verification process:**
 
   Like the exams of the Linux Foundation, Certifiable, Inc. will require candidates to verify their identity by uploading a photo ID. This is a common practice in the industry and ensures that the person taking the exam is the person who is supposed to take it.
 
@@ -163,7 +161,7 @@ After the LLM has classified the question as outdated or current, an expert will
 
   Publicly available libraries will be used for this purpose.
 
-### Combining the components / Roadmap:
+### 3.3 Combining the components / Roadmap:
 Initially we'll use the statistical analysis to identify questions that are statistical outliers, flag them accordingly and send them forward for further analysis (e.g to detect leaks or outdated content).
 
 Questions that got flagged for a suspicious high success rate will we checked for leaks using the embedding-based similarity search. And an expert will review the flagged questions together with the web content to make a final decision.
@@ -208,9 +206,7 @@ flowchart TD
     %% Later on, proactive checks are applied without relying solely on statistical analysis.
 ```
 
-Later on, we'll not depend on the statistical analysis anymore, but proactively use the embedding-based similarity search and the LLM with contextual prompting and knowledge retrieval to identify potential leaks and outdated content.
-
----
+Later on, we'll not depend on the statistical analysis anymore, but proactively use the embedding-based similarity search and the LLM with contextual prompting and knowledge retrieval to identify potential leaks and outdated content.****
 
 ## 4. Other considered options
 
@@ -237,7 +233,8 @@ graph TD;
 
 
 
-### **Option 1 – Most Cost-Efficient Solution**
+### 4.1 Option 1 – Optimized for Cost Efficiency
+
 In contrast to the chosen approach, this option focuses on the most cost-efficient solution to address the requirements.
 Only the most basic statistical analysis and fraud detection methods are used, without advanced LLM or embedding-based techniques.
 This still ensures to find outliers and detect fraud, but does not cover leak detection or outdated question identification.
@@ -263,7 +260,8 @@ class Leak,Outdated inactive;
    - **Pros:** Uses basic statistical methods and fraud detection for a cost-effective solution.
    - **Cons:** Does not address leaked content or outdated question detection.
 
-### **Option 2 – Cover All Requirements in the Most Advanced Way**
+### 4.2 Option 2 – Optimized for maximum coverage and precision
+
 This option aims to cover all requirements using the most advanced analytical methods available, including LLM-enhanced contextual analysis and fraud investigation pipelines.
 Detailed description of the components can be found in the end of this section.
 
@@ -288,13 +286,19 @@ graph TD;
     Fraud --> L[LLM-Enhanced<br>Fraud<br>Investigation<br>Pipeline];
 
 ```
-### Leak detection – LLM-Enhanced Contextual Analysis
+
+Below are the detailed descriptions of the components involved in Option 2 such as:
+- LLM-Enhanced Contextual Analysis
+- RAG with LLM Analysis
+- LLM-Enhanced Fraud Investigation Pipeline
+
+#### 4.2.1 Leak detection – LLM-Enhanced Contextual Analysis
 **Approach:**
 - When a potential leak is suspected, feed both the test question and the aggregated web search results (or summary snippets) into an LLM via a carefully crafted prompt.
 - The prompt instructs the LLM to assess whether the question (or significant parts thereof) appears to have been published or discussed publicly.
 - The LLM can provide a qualitative judgment along with a confidence score or recommended next steps (e.g., manual verification).
 
-## Find outdated questions – RAG with LLM Analysis
+#### 4.2.2 Find outdated questions – RAG with LLM Analysis
 **Approach:**
 
 Use a RAG system that leverages vector search over a curated corpus consisting of up-to-date books, blog posts, conference materials, and papers. For each question under evalutaion, retrieve related contemporary documents from the vector database
@@ -304,7 +308,16 @@ Components Involved:
 - RAG Pipeline: Retrieve semantically similar documents to each test question.
 - LLM: Process the question and retrieved documents to generate an analysis indicating if concepts, terminology, or technologies referenced in the question are outdated.
 
----
+#### 4.2.3 Fraud detection – LLM-Enhanced Fraud Investigation Pipeline
+
+**Approach:**
+- **Integrate Multiple Data Sources:**  
+  Feed structured (behavioral metrics, metadata) and unstructured (textual feedback, candidate explanations, support tickets) information into a hybrid analysis system.
+- **LLM Prompting for Contextual Reasoning:**  
+  Use a fine-tuned LLM drafted with prompts to assess the context and potential intent behind suspicious behaviors. For example, the LLM might review patterns, compare them to known fraud cases described in external literature, and then provide a confidence rating or narrative justification.
+- **Hybrid Decision Support:**  
+  Combine the LLM’s qualitative assessment with quantitative anomaly scores from traditional models.
+
 
 ## 5. Trade-Off Analysis
 
@@ -317,7 +330,6 @@ Components Involved:
 - **Scalability vs. Complexity:**
   Integrating multiple analytical methods increases system complexity; however, it ensures scalability to handle evolving candidate volumes without compromising quality.
 
----
 
 ## 6. Consequences
 
@@ -343,7 +355,6 @@ Components Involved:
 - **Resource Allocation:**
   Sustained computational resources may be required for LLM processing and real-time similarity searches.
 
----
 
 ## 7. Implementation Plan
 
@@ -367,19 +378,16 @@ Components Involved:
    - Develop comprehensive documentation for system maintenance.
    - Train key personnel on monitoring, troubleshooting, and updating the new system components.
 
----
 
 ## 8. Future Work
 
-### Extend the Analysis to Cover Case Study Questions
+### 8.1 Extend the Analysis to Cover Case Study Questions
 As mentioned in chapter [2. Context and Problem Statement](#2.-Context-and-Problem-Statement), in the future this ADR will be extended to cover the case study part as well. The same components could be used to analyze the case study questions.
 
-### Adjust difficulty of aptitude test based on case study performance
+### 8.2 Adjust difficulty of aptitude test based on case study performance
 Given that the aptitude test represents kind of a gatekeeper for candidates to do the case study part, which is significantly more expensive to grade,
 it is important to ensure that the aptitude test is as reliable as possible and filters out candidates that are not ready for the case study part. 
 One way to adjust the quality of the aptitude test would be to:
 1. Query for candidates that passed the aptitude test but failed the case study part
 2. Identify which questions in the aptitude test those candidates failed
 3. Increase the number of those kind of questions in the aptitude test, since they seem to be a good indicator for candidates that are not ready for the case study part.
-
-...

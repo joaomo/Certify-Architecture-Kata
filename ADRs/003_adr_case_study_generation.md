@@ -1,6 +1,6 @@
 # ADR: Intelligent Case Study Generation Using AI
 
-## ADR ID: 004  
+## ADR ID: 003
 
 ## Date: 2024-02-14  
 

@@ -96,7 +96,7 @@ Beyond grading, the team also explored **Intelligent Case Study Generation**. Re
 
 Finally, to ensure the ongoing integrity and relevance of the entire certification process, they implemented **AI-assisted Test Result Analysis**. This system uses a combination of **statistical analysis** to identify outlier questions, **embedding-based similarity search** to detect potential content leaks by comparing question embeddings to web content, and **LLMs with contextual prompting** to assess whether test questions are becoming outdated by evaluating them against current industry knowledge. Furthermore, they incorporated **behavioral and metadata analysis** to detect potentially fraudulent test-taking behaviors. This multi-faceted approach proactively identifies and addresses issues that could compromise the quality and fairness of the certification, ensuring continuous improvement and robustness of the SoftArchCert program.
 
-In summary, Certifiable, Inc. strategically integrated AI throughout their SoftArchCert system, from aptitude tests to complex architecture submissions and even case study generation and test analysis. This hybrid approach balances the efficiency and scalability of AI with the critical oversight and nuanced judgment of expert software architects, ensuring a robust, fair, and future-proof certification process.
+In summary, Certifiable, Inc. will strategically integrate AI throughout their SoftArchCert system, from aptitude tests to complex architecture submissions and even case study generation and test analysis. This hybrid approach balances the efficiency and scalability of AI with the critical oversight and nuanced judgment of expert software architects, ensuring a robust, fair, and future-proof certification process.
 
 ---
 

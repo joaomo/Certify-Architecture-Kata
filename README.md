@@ -1,4 +1,4 @@
-# **Unkatabel case study - Architecture Katas**
+# **Unkatable case study - Architecture Katas**
 
 ### Welcome to the **Certify-Architecture-Kata** repository!
 
@@ -46,24 +46,114 @@
 ### 🌟 **Team Members**
 -   **[Nuno Pacheco](https://www.linkedin.com/in/nmpacheco/)** - [Staff Engineer]
 -   **[João O'Neill](https://www.linkedin.com/in/joão-m-o-neill-443aa436/)** - [Senior Site Reliability Engineer]
--   **[Alexander Knoch](https://www.linkedin.com/in/alexander-knoch-always-keep-learning/)** - [Software Egineer]
--   **[João Almeida](https://www.linkedin.com/in/joao-tiago-almeida/)** - [Software Egineer]
+-   **[Alexander Knoch](https://www.linkedin.com/in/alexander-knoch-always-keep-learning/)** - [Software Engineer]
+-   **[João Almeida](https://www.linkedin.com/in/joao-tiago-almeida/)** - [Software Engineer]
 
 ---
 
 ## 📝 **Requirements**
 
+
 ### Functional Requirements
-📄 [View Functional Requirements](1_requirements/01-functional-requirements.md)  
-[Briefly describe the types of functional requirements documented.  What are the core functionalities the system *must* provide?]
+
+1. **Automated Grading System:**
+   - Implement a Generative AI system to automate the grading of short answer questions in Test 1 (aptitude test) and architecture submissions in Test 2 to handle increased demand.
+   - Ensure the AI system can evaluate answers and architectural solutions against predefined criteria and provide detailed feedback.
+
+2. **AI-Driven Case Study Generation:**
+   - Develop a system that uses AI to generate new case studies for Test 2 (architecture solution) to prevent case studies and answers from leaking out to the internet. 
+
+3. **Candidate Management:**
+   - Maintain a database of candidates, tracking their progress through the certification process, including test results, time limits, and certification status. 
+
+4. **Certification Database Management:**
+   - Update and maintain the certification database to reflect new certifications and renewals, ensuring data integrity, security, and easy verification by companies. 
+
+5. **AI-Enhanced Feedback System:**
+   - Provide candidates with AI-generated detailed feedback on their test answers and submissions to help them understand areas of improvement. 
+
+6. **Integration with Existing Systems:**
+   - Ensure the new AI systems integrate seamlessly with existing components like user interfaces, databases, and notification services to avoid disruptions in the certification process. 
+
+7. **AI-Assisted Test Analysis:**
+   - Utilize AI to analyze aptitude test reports and identify questions that need to be modified, removed, or added based on candidate performance and industry advancements. 
 
 ### Non-Functional Requirements
-📄 [View Non-Functional Requirements](1_requirements/02-non-functional-requirements.md)  
-[Describe the types of non-functional requirements.  This includes performance, security, scalability, usability, etc.]
 
-### Assumptions and Constraints
-📄 [View Assumptions and Constraints](1_requirements/03-assumptions-and-constraints.md)  
-[Summarize the key assumptions made during development and any constraints that impacted the project.]
+1. **Scalability:**
+   - The system must be able to handle a 5-10X increase in certification requests without performance degradation, supporting the anticipated growth in the U.S. and overseas.
+
+2. **Performance:**
+   - Ensure that the AI grading system provides results within the current 1-week turnaround time for both Test 1 and Test 2.
+
+3. **Accuracy:**
+   - The AI grading system must maintain a high level of accuracy comparable to human expert graders to ensure the credibility of the certifications. 
+
+4. **Reliability:**
+   - The system should have high availability and reliability to support global candidates, minimizing downtime and ensuring a seamless certification experience.
+
+5. **Security:**
+   - Implement robust security measures to protect candidate data, test content, and certification information from unauthorized access or leaks.
+
+6. **Cost Efficiency:**
+   - While introducing AI, ensure that the system remains cost-effective, balancing the strategic importance of the initiative with budget constraints.
+
+7. **User Experience:**
+   - The system should provide an intuitive and user-friendly interface for candidates, administrators, and expert graders, facilitating easy navigation and use.
+
+8. **Compliance:**
+   - Ensure that the system complies with relevant data protection regulations, industry standards, and licensing board requirements, especially as the company expands internationally.
+
+### Assumptions
+
+* Historical Data:
+Historical data  for the short answers and case study submissions is available for training AI models.  This includes detailed grading guidelines for each question and case study to ensure consistency across the 300 experts grading the tests.
+
+* Candidate Volume:
+The current volume of 200 candidates per week across the U.S. is assumed to grow 5-10 times due to overseas expansion and the anticipated 21% growth over the next 4 years.
+The system is assumed to handle this increased volume without compromising on turnaround times or grading quality.
+
+* Expert Architect Availability:
+It is assumed that the current pool of 300 expert software architect consultants across the U.S. are available to handle any manual grading or verification tasks that may be required alongside the AI system.
+The 5 "designated" experts are assumed to be available to modify certification tests and change/add case studies as needed, even with the increased volume.
+
+* Certification Acceptance:
+The widespread acceptance of Certifiable, Inc.'s certification across the U.S., with over 80% of companies accepting or insisting on it, is assumed to extend to the overseas markets as well.
+
+* Cost: AI inference is cost effective relative to experts.
+
+*   Human Expertise: Human experts can effectively review AI-generated scores and feedback and provide valuable feedback for model improvement.
+
+*   Integration: Seamless integration with existing systems is achievable without major disruptions.
+*   Submission Format: Test 1 and Test 2 submissions are compatible with AI processing, and minor adjustments to the submission process are acceptable.
+
+
+
+### Constraints:
+
+* Grading Turnaround Time:
+The system is constrained by the guaranteed 1-week turnaround for grading both Test 1 (aptitude) and Test 2 (architecture submission), which must be maintained even with the increased volume. 
+
+* Certification Exam Cost:
+The certification exam cost of $800, which is fixed and established by the SALB, constrains the company's ability to adjust pricing to accommodate the costs of implementing the AI system.
+
+* Certification Process Timeframe:
+The system is constrained by the current timeframes for the certification process, such as the 30-day window for candidates to start Test 2 after passing Test 1 and the 2-week duration for completing Test 2.
+
+* Expert Architect Grading Time:
+The average grading time of 3 hours for short answer questions in Test 1 and 8 hours for architecture submissions in Test 2 by human expert software architects constrains the efficiency gains that can be achieved through automation. 
+
+
+* System Integration:
+The AI system must be integrated with the existing SoftArchCert system components, such as databases, user interfaces, and notification services, which may constrain the design and implementation choices.
+
+* Data Security and Privacy:
+The system is constrained by the need to ensure the security and privacy of candidate data, test content, and certification information, which may limit the choice of AI technologies or require additional security measures.
+
+*   Scalability Constraints:  While expert capacity can be increased, it is a lengthy process, and infrastructure costs can scale linearly with candidate volume.
+
+* Budget:
+While Certifiable, Inc. is willing to be somewhat flexible with costs for this strategic initiative, the budget for implementing the AI system is still a constraint that needs to be considered in the solution design.
 
 ---
 
@@ -90,7 +180,7 @@ Certifiable, Inc. embarked on a strategic initiative to integrate Artificial Int
 
 Our proposal is to start with **Test 2, the Architecture Solution submission**, which involves more complex, design-based assessments. Here, we chose to employ powerful **Large Language Models (LLMs)**, recognizing the nuanced nature of architectural grading. This **AI-Assisted Grading Service** provides preliminary grades and generates integrated feedback, pinpointing strengths and weaknesses in a candidate's architectural solution. The system also produces a **confidence score**, flagging submissions that require closer expert attention. This approach doesn't replace expert judgment but significantly streamlines the process, allowing architects to focus on refining AI-generated evaluations rather than starting from a blank slate. An important aspect of this system is a feedback loop that allows expert corrections to continuously improve the AI models over time.
 
-Building on this success, they extended AI assistance to **Test 1, the Aptitude Test**, where they introduced **AI-assisted grading for short-answer questions**. Instead of relying solely on expert architects for every submission, they implemented a hybrid system. This system uses **semantic similarity models** to compare candidate answers against ideal responses, providing an initial assessment. To further aid the software engineer experts, they integrated a **Retrieval-Augmented Generation (RAG) system**. This RAG system generates pre-written feedback options and highlights key areas in candidate responses, drastically reducing the time experts spend crafting feedback from scratch and ensuring more consistent evaluations. For high-confidence cases, the system even automates the pass decisions, freeing up expert time for more complex submissions, while still maintaining quality control through sample reviews.
+Building on this success, we propose to extend AI assistance to **Test 1, the Aptitude Test**, where we introduce **AI-assisted grading for short-answer questions**. Instead of relying solely on expert architects for every submission, we propose a hybrid system. This system uses **semantic similarity models** to compare candidate answers against ideal responses, providing an initial assessment. To further aid the software engineer experts, we integrate a **Retrieval-Augmented Generation (RAG) system**. This RAG system generates pre-written feedback options and highlights key areas in candidate responses, drastically reducing the time experts spend crafting feedback from scratch and ensuring more consistent evaluations. For high-confidence cases, the system even automates the pass decisions, freeing up expert time for more complex submissions, while still maintaining quality control through sample reviews.
 
 Beyond grading, the team also explored **Intelligent Case Study Generation**. Recognizing the strain on designated experts to create, update and archieve case studies manually, and the risks of content staleness and potential leaks, we propose using AI to dynamically generate new case studies. By employing various **prompt engineering techniques** with LLMs, we aim to create a system capable of producing diverse, relevant, and challenging case studies. This system incorporates a **human review interface**, ensuring that expert architects maintain oversight, review AI-generated content, and ensure its quality and alignment with certification standards. This hybrid approach promises to keep the case study pool fresh, secure, and scalable, reducing reliance on manual creation.
 

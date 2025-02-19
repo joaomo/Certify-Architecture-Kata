@@ -23,10 +23,10 @@ Our certification exam analysis is performed periodically (daily or weekly) to a
 Given the anticipated, steep growth in candidate numbers, it is imperative to automate the test analysis process to maintain the integrity and efficiency of our certification pipeline.
 The current process relies on basic statistical methods but lacks automated mechanisms for comprehensive leak detection and fraud analytics.
 
-**Scope and Limitaions of the ADR**
+**Scope and Limitations of the ADR**
 
 This ADR focuses mainly on the test analysis of questions and results of the aptitude test. From the business perspective, it is important to ensure that the aptitude test is a reliable indicator for the case study part of the certification process.
-Should the test be to hard, too many candidates will fail. Potentially resulting in a loss of reputation and revenue.
+Should the test be too hard, too many candidates will fail. Potentially resulting in a loss of reputation and revenue.
 But more importantly, should the test be too easy, candidates that are not ready for the case study part will pass the test, resulting in an increased workload for the case study grading team.
 
 At a later stage, the ADR will be extended to cover the case study part as well.
@@ -203,7 +203,7 @@ Initially we'll use the statistical analysis to identify questions that are stat
 Questions that got flagged for a suspicious high success rate will we checked for leaks using the embedding-based similarity search. And an expert will review the flagged questions together with the web content to make a final decision.
 Questions that got flagged for a suspicious low success rate will be checked for outdated content using the LLM with contextual prompting and knowledge retrieval. And an expert will review the flagged questions together with the context to make a final decision.
 
-The behavioral and metadata analysis will be used independently to detect fraudulent behavior. If a candidate is flagged for suspicious behavior, the candidate will be investigated further by an expert.
+The behavioral and metadata analysis will be used independently to detect fraudulent behavior. If a candidate is flagged for suspicious behavior, an expert will conduct a further investigation.
 
 ```mermaid
 ---

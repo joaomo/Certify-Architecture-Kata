@@ -1,8 +1,8 @@
 # ADR: Test Result Analysis for Software Architect Certification
 
-## ADR ID: 005
+## ADR ID: 004
 
-## Date: 2025-02-16
+## Date: 2025-02-19
 
 ## Status: Proposed
 
